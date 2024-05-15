@@ -44,7 +44,7 @@
  * Input Parameters:
  *   path - The path to the inode to create
  *   fops - The file operations structure
- *   mode - inmode privileges
+ *   mode - inode privileges
  *   priv - Private, user data that will be associated with the inode.
  *
  * Returned Value:

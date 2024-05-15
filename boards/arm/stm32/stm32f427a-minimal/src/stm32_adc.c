@@ -31,7 +31,21 @@
 #include <nuttx/board.h>
 #include <nuttx/analog/adc.h>
 
+#include <stdio.h>
+
 #include "stm32.h"
+
+#include <stdint.h>
+#include <string.h>
+
+#include <nuttx/spi/spi.h>
+#include <arch/board/board.h>
+
+#include "arm_internal.h"
+#include "chip.h"
+
+#include "nuttx/analog/ads7953.h"
+
 
 #if defined(CONFIG_ADC) && (defined(CONFIG_STM32_ADC1) || defined(CONFIG_STM32_ADC3))
 
@@ -61,8 +75,8 @@
 
 /* TODO DMA */
 
-#define ADC1_NCHANNELS 2
-#define ADC3_NCHANNELS 1
+#define ADC1_NCHANNELS 8
+#define ADC3_NCHANNELS 7
 
 /****************************************************************************
  * Private Function Prototypes
@@ -80,18 +94,31 @@
 
 /* Identifying number of each ADC channel (even if NCHANNELS is less ) */
 
-static const uint8_t g_chanlist1[2] =
+static const uint8_t g_chanlist1[8] =
 {
+  4,
   5,
-  13,
+  6,
+  7,
+  8,
+  9,
+  14,
+  15,
 };
 
 /* Configurations of pins used by each ADC channel */
 
-static const uint32_t g_pinlist1[2]  =
+static const uint32_t g_pinlist1[8]  =
 {
-  GPIO_ADC1_IN5,                /* PA5 */
-  GPIO_ADC1_IN13,               /* PC3 */
+  GPIO_ADC1_IN4,                /* PA4/N2   5V CURRENT                  ADC1/2 COMP. */
+  GPIO_ADC1_IN5,                /* PA5/M3   BATTERY MONITOR             ADC1/2 COMP. */
+  GPIO_ADC1_IN6,                /* PA6/N3   SOLAR PANEL 1 CURRENT       ADC1/2 COMP. */
+  GPIO_ADC1_IN7,                /* PA7/K4   3V3 2 CURRENT               ADC1/2 COMP. */
+  GPIO_ADC1_IN8,                /* PB0/N4   SOLAR PANEL 4 CURRENT       ADC1/2 COMP. */
+  GPIO_ADC1_IN9,                /* PB1/K5   SOLAR PANEL 5 CURRENT       ADC1/2 COMP. */
+
+  GPIO_ADC1_IN14,               /* PC4/L4   SOLAR PANEL 2 CURRENT       ADC1/2 COMP. */
+  GPIO_ADC1_IN15,               /* PC5/M4   SOLAR PANEL 3 CURRENT       ADC1/2 COMP. */
 };
 
 #elif DEV1_PORT == 3
@@ -100,16 +127,31 @@ static const uint32_t g_pinlist1[2]  =
 
 /* Identifying number of each ADC channel */
 
-static const uint8_t g_chanlist1[1] =
+static const uint8_t g_chanlist1[7] =
 {
-  4,
+  0,
+  2,
+  3,
+  10,
+  11,
+  12,
+  14,
 };
 
 /* Configurations of pins used by each ADC channel */
 
-static const uint32_t g_pinlist1[1] =
+static const uint32_t g_pinlist1[7] =
 {
-  GPIO_ADC3_IN4,                /* PF6 */
+  GPIO_ADC3_IN0,                /* PA0/J5   UNREG CURRENT               ADC1/2/3 COMP. */  
+
+  GPIO_ADC3_IN2,                /* PA2/K2   MAIN 3V3 CURRENT            ADC1/2/3 COMP. */
+  GPIO_ADC3_IN3,                /* PA3/K3   3V3 COM CURRENT             ADC1/2/3 COMP. */
+
+  GPIO_ADC3_IN10,               /* PC0/G6   BATTERY CURRENT             ADC1/2/3 COMP. */
+  GPIO_ADC3_IN11,               /* PC1/H5   SOLAR PANEL TOTAL CURRENT   ADC1/2/3 COMP. */
+  GPIO_ADC3_IN12,               /* PC2/H6   RAW CURRENT                 ADC1/2/3 COMP. */
+
+  GPIO_ADC3_IN14,                /* PF4/G3    4V CURRENT    ADC3 COMP. */
 };
 
 #endif /* DEV1_PORT == 1 */
@@ -124,20 +166,31 @@ static const uint32_t g_pinlist1[1] =
 
 /* Identifying number of each ADC channel */
 
-static const uint8_t g_chanlist2[3] =
+static const uint8_t g_chanlist2[7] =
 {
-  8,
-  9,
-  10
+  0,
+  2,
+  3,
+  10,
+  11,
+  12,
+  14,
 };
 
 /* Configurations of pins used by each ADC channel */
 
-static const uint32_t g_pinlist2[3] =
+static const uint32_t g_pinlist2[7] =
 {
-  GPIO_ADC3_IN8,                /* PD11/A3 */
-  GPIO_ADC3_IN9,                /* PD12/A4 */
-  GPIO_ADC3_IN10,               /* PD13/A5 */
+  GPIO_ADC3_IN0,                /* PA0/J5   UNREG CURRENT               ADC1/2/3 COMP. */  
+
+  GPIO_ADC3_IN2,                /* PA2/K2   MAIN 3V3 CURRENT            ADC1/2/3 COMP. */
+  GPIO_ADC3_IN3,                /* PA3/K3   3V3 COM CURRENT             ADC1/2/3 COMP. */
+
+  GPIO_ADC3_IN10,               /* PC0/G6   BATTERY CURRENT             ADC1/2/3 COMP. */
+  GPIO_ADC3_IN11,               /* PC1/H5   SOLAR PANEL TOTAL CURRENT   ADC1/2/3 COMP. */
+  GPIO_ADC3_IN12,               /* PC2/H6   RAW CURRENT                 ADC1/2/3 COMP. */
+
+  GPIO_ADC3_IN14,                /* PF4/G3    4V CURRENT    ADC3 COMP. */
 };
 
 #endif /* DEV2_PORT == 3 */
@@ -184,16 +237,15 @@ int stm32_adc_setup(void)
       adc = stm32_adcinitialize(DEV1_PORT, g_chanlist1, DEV1_NCHANNELS);
       if (adc == NULL)
         {
-          aerr("ERROR: Failed to get ADC interface 1\n");
+          printf("ERROR: Failed to get ADC interface 1\n");
           return -ENODEV;
         }
 
       /* Register the ADC driver at "/dev/adc0" */
-
       ret = adc_register("/dev/adc0", adc);
       if (ret < 0)
         {
-          aerr("ERROR: adc_register /dev/adc0 failed: %d\n", ret);
+          printf("ERROR: adc_register /dev/adc0 failed: %d\n", ret);
           return ret;
         }
 

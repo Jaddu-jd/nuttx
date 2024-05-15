@@ -406,4 +406,17 @@
 
 #define SNIOC_ENABLE_FIFO             _SNIOC(0x009A)
 
+/* Commands specific to ADS7953 ADC driver */
+
+/* to select manual mode for ADC */
+#define SNIOC_ADC_MANUAL_SELECT              _SNIOC(0x009B)
+
+/* to select auto 2 mode */
+#define SNIOC_ADC_AUTO_2_SELECT              _SNIOC(0x009C)
+
+/* to program in auto 2 mode ; after this auto 2 mode register read is done which can be called from application directly*/
+#define SNIOC_ADC_AUTO_2_PROGRAM             _SNIOC(0x009D)
+
+#define SNIOC_ADC_AUTO_2_SELECT_READ         _SNIOC(0x009E)
+
 #endif /* __INCLUDE_NUTTX_SENSORS_IOCTL_H */

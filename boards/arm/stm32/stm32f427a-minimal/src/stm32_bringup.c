@@ -33,20 +33,10 @@
 #include <nuttx/fs/fs.h>
 #include <nuttx/kmalloc.h>
 
-#ifdef CONFIG_STM32_SPI4
-#  include <nuttx/mmcsd.h>
-#endif
+#include <nuttx/analog/ads7953.h>
 
 #if defined(CONFIG_MTD_SST25XX) || defined(CONFIG_MTD_PROGMEM)
 #  include <nuttx/mtd/mtd.h>
-#endif
-
-#ifdef CONFIG_VIDEO_FB
-#  include <nuttx/video/fb.h>
-#endif
-
-#ifdef CONFIG_USBMONITOR
-#  include <nuttx/usb/usbmonitor.h>
 #endif
 
 #ifndef CONFIG_STM32F427V_FLASH_MINOR
@@ -138,35 +128,62 @@ int stm32_bringup(void)
   /* Get the SPI port */
 
   syslog(LOG_INFO, "Initializing SPI port 4\n");
-
+  printf("Initializing SPI port 4\n");
   spi = stm32_spibus_initialize(4);
   if (!spi)
     {
       syslog(LOG_ERR, "ERROR: Failed to initialize SPI port 4\n");
+      printf("ERROR: Failed to initialize SPI port 4\n\n");
       return -ENODEV;
     }
-
+  
   syslog(LOG_INFO, "Successfully initialized SPI port 4\n");
-
-  /* Now bind the SPI interface to the SST25F064 SPI FLASH driver.  This
+  printf("Successfully initialized SPI port 4\n");
+  /* Now bind the SPI interface to the MT25 SPI FLASH driver.  This
    * is a FLASH device that has been added external to the board (i.e.
    * the board does not ship from STM with any on-board FLASH.
    */
-
-#if defined(CONFIG_MTD) && defined(CONFIG_MTD_SST25XX)
+#if defined(CONFIG_M25P)  || defined(CONFIG_MT25Q)
   syslog(LOG_INFO, "Bind SPI to the SPI flash driver\n");
 
-  mtd = sst25xx_initialize(spi);
+  mtd = m25p_initialize(spi);
   if (!mtd)
     {
-      syslog(LOG_ERR, "ERROR: Failed to bind SPI port 4 to the SPI FLASH"
+      syslog(LOG_ERR, "ERROR: Failed to bind SPI port 4 to the SPI mt25 FLASH"
                       " driver\n");
+      printf("ERROR: Failed to bind SPI port 4 to the SPI FLASH mt25 driver\n");
     }
   else
     {
       syslog(LOG_INFO, "Successfully bound SPI port 4 to the SPI FLASH"
                        " driver\n");
+      printf("Successfully bound SPI port 4 to the SPI FLASH\n");
+      /* Get the geometry of the FLASH device */
 
+      ret = mtd->ioctl(mtd, MTDIOC_GEOMETRY,
+                       (unsigned long)((uintptr_t)&geo));
+      if (ret < 0)
+        {
+          ferr("ERROR: mtd->ioctl failed: %d\n", ret);
+          return ret;
+        }
+  #endif
+
+#if defined(CONFIG_MTD) && defined(CONFIG_MTD_MT25XX)
+  syslog(LOG_INFO, "Bind SPI to the SPI flash driver\n");
+
+  mtd = mt25xx_initialize(spi);
+  if (!mtd)
+    {
+      syslog(LOG_ERR, "ERROR: Failed to bind SPI port 4 to the SPI FLASH"
+                      " driver\n");
+      printf("ERROR: Failed to bind SPI port 4 to the SPI FLASH driver\n");
+    }
+  else
+    {
+      syslog(LOG_INFO, "Successfully bound SPI port 4 to the SPI FLASH"
+                       " driver\n");
+      printf("Successfully bound SPI port 4 to the SPI FLASH\n");
       /* Get the geometry of the FLASH device */
 
       ret = mtd->ioctl(mtd, MTDIOC_GEOMETRY,
@@ -391,6 +408,14 @@ int stm32_bringup(void)
              " %d\n", ret);
     }
 #endif
+#ifdef CONFIG_SENSORS_MPU60x0
+  ret = board_l3gd20_initialize(0, 5);
+  if (ret != OK)
+    {
+      syslog(LOG_ERR, "ERROR: Failed to initialize l3gd20 sensor:"
+             " %d\n", ret);
+    }
+#endif
 
 #ifdef CONFIG_PWM
   /* Initialize PWM and register the PWM device. */
@@ -403,6 +428,7 @@ int stm32_bringup(void)
 #endif
 
 #ifdef CONFIG_ADC
+  struct spi_dev_s *spi1;
   /* Initialize ADC and register the ADC device. */
 
   ret = stm32_adc_setup();
@@ -410,7 +436,22 @@ int stm32_bringup(void)
     {
       syslog(LOG_ERR, "ERROR: stm32_adc_setup() failed: %d\n", ret);
     }
-#endif
+  printf("Initializing SPI Bus 2");
+  spi1 = stm32_spibus_initialize(2);
+  if(!spi1){
+    printf("Failed to initialize SPI Bus 2");
+    return -ENODEV;
+  }
+  printf("Initialized SPI Bus 2 Successfully");
+
+  // stm32_adcinitialize(DEV1_PORT, g_chanlist1, DEV1_NCHANNELS);
+
+  ret = ads7953_register("/dev/ext_adc1",spi1, 0);
+  if(ret < 0){
+    printf("Could not register External ADC");
+    return -ENODEV;
+  }
+#endif //#CONFIG ADC
 
 #ifdef CONFIG_STM32_CAN_CHARDRIVER
   /* Initialize CAN and register the CAN driver. */

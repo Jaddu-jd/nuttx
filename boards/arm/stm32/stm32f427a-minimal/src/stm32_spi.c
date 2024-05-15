@@ -36,6 +36,7 @@
 #include "chip.h"
 #include "stm32.h"
 #include "stm32f427a.h"
+#include "stdio.h"
 
 #if defined(CONFIG_STM32_SPI1) || defined(CONFIG_STM32_SPI2) || defined(CONFIG_STM32_SPI3) ||\
     defined(CONFIG_STM32_SPI4) || defined(CONFIG_STM32_SPI5) || defined(CONFIG_STM32_SPI6)
@@ -63,7 +64,7 @@ struct spi_dev_s *g_spidev5 = NULL;
 
 void weak_function stm32_spidev_initialize(void)
 {
-
+    stm32_configgpio(GPIO_ADS7953_CS);
 }
 
 /****************************************************************************
@@ -112,12 +113,16 @@ void stm32_spi2select(struct spi_dev_s *dev,
                       uint32_t devid,
                       bool selected)
 {
-  spiinfo("devid: %d CS: %s\n",
-         (int)devid, selected ? "assert" : "de-assert");
+  spiinfo("devid: %d CS: %d\n",
+         (int)devid, selected);
+  printf("devid: %d CS: %d\n",
+         (int)devid, selected );
+  stm32_gpiowrite(GPIO_ADS7953_CS, !selected);
 }
 
 uint8_t stm32_spi2status(struct spi_dev_s *dev, uint32_t devid)
 {
+  // stm32_gpiowrite(GPIO_ADS7953_CS, selected);
   return 0;
 }
 #endif
@@ -141,7 +146,7 @@ void stm32_spi4select(struct spi_dev_s *dev,
                       uint32_t devid, bool selected)
 {
   spiinfo("devid: %%d CS: %s\n",
-            (int)devid, selected ? "assert" : "de-assert");)
+            (int)devid, selected ? "assert" : "de-assert");
 }
 
 uint8_t stm32_spi4status(struct spi_dev_s *dev, uint32_t devid)
@@ -155,7 +160,7 @@ void stm32_spi5select(struct spi_dev_s *dev,
                       uint32_t devid, bool selected)
 {
   spiinfo("devid: %%d CS: %s\n",
-            (int)devid, selected ? "assert" : "de-assert");)
+            (int)devid, selected ? "assert" : "de-assert");
 }
 
 uint8_t stm32_spi5status(struct spi_dev_s *dev, uint32_t devid)

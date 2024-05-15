@@ -109,6 +109,8 @@
 #define AN_SAMV7_AFEC_FIRST (AN_MCP48XX_FIRST + AN_MCP48XX_NCMDS)
 #define AN_SAMV7_AFEC_NCMDS 1
 
+
+
 /****************************************************************************
  * Public Function Prototypes
  ****************************************************************************/

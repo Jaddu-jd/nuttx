@@ -191,11 +191,17 @@
 
 
 /* SPI - External SPI flash may be connected on SPI4: */
+#define GPIO_SPI2_MISO GPIO_SPI2_MISO_1
+#define GPIO_SPI2_MOSI GPIO_SPI2_MOSI_1
+#define GPIO_SPI2_SCK  GPIO_SPI2_SCK_2
 
 #define GPIO_SPI4_MISO GPIO_SPI4_MISO_1
 #define GPIO_SPI4_MOSI GPIO_SPI4_MOSI_1
 #define GPIO_SPI4_SCK  GPIO_SPI4_SCK_1
 
+#define GPIO_SPI5_MISO GPIO_SPI5_MISO_2
+#define GPIO_SPI5_MOSI GPIO_SPI5_MOSI_2
+#define GPIO_SPI5_SCK  GPIO_SPI5_SCK_2
 
 /* Timer Inputs/Outputs (see the README.txt file for options) */
 
@@ -205,9 +211,12 @@
 #define GPIO_TIM8_CH1IN  GPIO_TIM8_CH1IN_1
 #define GPIO_TIM8_CH2IN  GPIO_TIM8_CH2IN_1
 
+/* ADS7953 CS Pin*/
+#define GPIO_ADS7953_CS   (GPIO_OUTPUT|GPIO_SPEED_50MHz|GPIO_PORTD|GPIO_PIN9)
 
 /* DMA **********************************************************************/
 
 #define ADC1_DMA_CHAN DMAMAP_ADC1_1
+#define ADC3_DMA_CHAN   DMAMAP_ADC3_2
 
 #endif /* __BOARDS_ARM_STM32_STM32F427A_INCLUDE_BOARD_H */
