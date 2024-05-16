@@ -82,7 +82,8 @@ static void ads7953_read16(FAR struct ads7953_dev_s *priv, uint8_t *cmd, uint8_t
  * Private Data
  ****************************************************************************/
 
-/* This is for upper level file operation to access from custom applications */
+/* This is for upper level file operation to access from custom applications through standard read/write/open/ioctl methods*/
+
 static const struct file_operations g_ads7953ops =
 {
     ads7953_open,   /* open */
@@ -97,6 +98,22 @@ static const struct file_operations g_ads7953ops =
  * Private Functions
  ****************************************************************************/
 
+
+/****************************************************************************
+ * Name: ads7953_configspi
+ * 
+ * Description:
+ *    SPI configuration function to configure spi mode, frequency and everything. Only minimum configurations have been done; 
+ *    can add other configurations or change existing configurations as per need.
+ * 
+ * Input Parameters:
+ *    *spi -- spi device pointer
+ * 
+ * Return Value:
+ *    None
+ * 
+ ****************************************************************************/
+
 static inline void ads7953_configspi(FAR struct spi_dev_s *spi){
     SPI_SETMODE(spi, ADS7953_SPI_MODE);
     SPI_SETBITS(spi, 8);
@@ -105,23 +122,39 @@ static inline void ads7953_configspi(FAR struct spi_dev_s *spi){
 }
 
 /****************************************************************************
- * Name: ads7953_read16
+ * Name: ads7953_write16
+ * 
+ * Description:
+ *    this is the actual function that sends and receives data to and from ads7953 through SPI
+ *    it can be called by either ioctl commands or write() file operations function
+ * 
+ * Input Parameters:
+ *    *priv -- ads7953 structure pointer  
+ *    *cmd --  command pointer to send data (2 bytes data)
+ * 
  ****************************************************************************/
 
 static void ads7953_write16(FAR struct ads7953_dev_s *priv, uint8_t *cmd){
-  //if preemption is enabled and IRQ is required, use enter_critical_section() function 
+
+  /* if preemption is enabled and IRQ is required, use enter_critical_section() function */
+
   SPI_LOCK(priv->spi, true);    //if thread lock then it is required, otherwise not
+
   ads7953_configspi(priv->spi); //configure SPI, set speed, type, HW features etc.
+
   SPI_SELECT(priv->spi, priv->spidev, true);  //selects the SPI to transfer data (including setting CS pin)
   SPI_EXCHANGE(priv->spi, cmd, NULL, 2);
   SPI_SELECT(priv->spi, priv->spidev, false);   //deselect the SPI after use
 
-  SPI_LOCK(priv->spi, false);     //unlock the thread
+  SPI_LOCK(priv->spi, false);     //unlock the thread of spi2
   return;
 }
 
 /****************************************************************************
  * Name: ads7953_read16
+ * 
+ * Description:
+ *    
  ****************************************************************************/
 
 static void ads7953_read16(FAR struct ads7953_dev_s *priv, uint8_t *cmd, uint8_t *data){
@@ -137,6 +170,17 @@ static void ads7953_read16(FAR struct ads7953_dev_s *priv, uint8_t *cmd, uint8_t
 
 /****************************************************************************
  * Name: ads7953_open
+ * 
+ * Description:
+ *    character driver function to open the ADC device file to read/write data to and from external ADC
+ *    This function is called whenever the ads7953 device driver is opened
+ *    passes the file pointers to configure device
+ *    
+ * Input Parameters:
+ *    *filep - file pointer structure
+ * 
+ * Return value:
+ *    OK
  ****************************************************************************/
 
 static int ads7953_open(FAR struct file *filep)
@@ -150,6 +194,17 @@ static int ads7953_open(FAR struct file *filep)
 
 /****************************************************************************
  * Name: ads7953_read
+ * 
+ * Description:
+ *    executes standard read operation. 
+ * 
+ * Input Parameters:
+ *    *filep -- pointer to the file of device which needs to be operated
+ *    *buffer -- character pointer to store received data
+ *    * buflem -- no of bytes to receive
+ * 
+ * Return Value:
+ *    sizeof data read from ADS7953
  ****************************************************************************/
 
 static ssize_t ads7953_read(FAR struct file *filep, FAR char *buffer,
@@ -159,15 +214,30 @@ static ssize_t ads7953_read(FAR struct file *filep, FAR char *buffer,
   FAR struct ads7953_dev_s *priv = inode->i_private;
   uint8_t temp[2] = {'\0'};
   uint8_t *buf = '\0';
+  struct ads7953_data_config_s adc_data_struct[MAX_ADC_CHANNELS];
   temp[0] = AUTO_2_MODE2_1;
   temp[1] = AUTO_2_MODE2_2;
+  // for(int i=0;i<8;i++){
   ads7953_read16(priv, temp, buf);
-  memcpy(buffer, buf, sizeof(buf));
-  return sizeof(buf);
+  // }
+  printf("Buffer data: %d size: %d \n",*buf, sizeof(*buf));
+  itoa(*buf,buffer,2);
+  return sizeof(*buf);
 }
 
 /****************************************************************************
- * Name: adxl372_write
+ * Name: ads7953_write
+ * 
+ * Description:
+ *    standard file operation function to write data to the driver through write() method.
+ * 
+ * Input Parameters:
+ *    *filep -- file pointer of device
+ *    *buffer -- character pointer (command which needs to be written)
+ *    *buflen -- size of command to send (not used since every command is of 2 bytes for ADS7953)
+ * 
+ * Return value:
+ *    OK -- write operation successful
  ****************************************************************************/
 
 static ssize_t ads7953_write(FAR struct file *filep, FAR const char *buffer,
@@ -175,8 +245,12 @@ static ssize_t ads7953_write(FAR struct file *filep, FAR const char *buffer,
 {
   FAR struct inode *inode = filep->f_inode;
   FAR struct ads7953_dev_s *priv = inode->i_private;
-
-  ads7953_write16(priv, (int16_t )buffer); //maybe mutex is required but the actual use of it is not well understood so skip for now
+  uint16_t tempval = atoi(buffer);
+  uint8_t cmd[2] = {'\0'};
+  cmd[0] = tempval >> 8;
+  cmd[1] = tempval;
+  ads7953_write16(priv, cmd); //maybe mutex is required but the actual use of it is not well understood so skip for now
+  return OK;
 }
 
 
@@ -184,15 +258,19 @@ static ssize_t ads7953_write(FAR struct file *filep, FAR const char *buffer,
  * Name: ads7953_ioctl
  * 
  * Description: 
- *   ioctl/special commands to allow application layer to access the hardware directly bypassing the read()/write() commands. 
+ *   ioctl/special commands to allow application layer to access the hardware directly without using the read()/write() commands. 
  *   External ADC needs to use IOCTL commands because it needs to write into registers directly    
  * 
  * Input Parameters:
- *  
+ *   Described below: 
  * 
  * Return Value:
  *   Zero on success; non-zero value on failure
+ * 
+ * Note: There are two ways to read ADC data: through IOCTL commands and by read/write methods. Figure out which one is better for our use.
+ *        IOCTL gives more control while read/write methods are more streamlined with POSIX standard
  ****************************************************************************/
+
 static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 {
   FAR struct inode *inode = filep->f_inode;
@@ -201,11 +279,9 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
   uint8_t temp[2] = {'\0'};
   switch (cmd)
     {
-      /* switch to manual select mode arg: none*/
+      /* switch to manual select mode; arg: none*/
       case SNIOC_ADC_MANUAL_SELECT:
         {
-          // FAR uint8_t *ptr = (FAR uint8_t *)((uintptr_t)arg);
-          // DEBUGASSERT(ptr != NULL);
           temp[0]  = MANUAL_MODE_1;
           temp[1] = MANUAL_MODE_2;
           ads7953_write16(priv, temp);
@@ -213,11 +289,9 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
         }
         break;
 
-      /* send the ADC1 select command */
+      /* send the ADC2 auto select command; (refer to datasheet if confusion)*/
       case SNIOC_ADC_AUTO_2_SELECT:
         {
-          // FAR uint8_t *ptr = (FAR uint8_t *)((uintptr_t)arg);
-          // DEBUGASSERT(ptr != NULL);
           temp[0] = AUTO_2_MODE_1; 
           temp[1] = AUTO_2_MODE_2;
           ads7953_write16(priv, temp);
@@ -225,11 +299,9 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
         }
         break;
       
-      /* send the ADC1 program command */
+      /* send the ADC2 auto program command */
       case SNIOC_ADC_AUTO_2_PROGRAM:
         {
-          // FAR uint8_t *ptr = (FAR uint8_t *)((uintptr_t)arg);
-          // DEBUGASSERT(ptr != NULL);
           temp[0]  = ADC_AUTO_2_PROGRAM2_1;
           temp[1] = ADC_AUTO_2_PROGRAM2_2;
           ads7953_write16(priv, temp);
@@ -237,7 +309,8 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
         }
         break;
 
-      /* send the ADC1 program command */
+      /* send the ADC2 select read command (perform auto_2_select, auto_2_program and run this command to get the channel data;
+      * keep calling this ioctl to get new channel data every time)  */
       case SNIOC_ADC_AUTO_2_SELECT_READ:
         {
           FAR uint8_t *ptr = (FAR uint8_t *)((uintptr_t)arg);
@@ -250,6 +323,7 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
         }
         break;
 
+      /* wrong ioctl command */
       default:
         sninfo("Unrecognized cmd: %d\n", cmd);
         ret = -ENOTTY;

@@ -78,10 +78,11 @@ struct ads7953_config_s
   int spi_devid;
 };
 
-begin_packed_struct struct ads7953_channel_config_s
+typedef struct ads7953_data_config_s
 {
-  uint8_t channel;      /* This will be the channel number returned in struct adc_msg_s for a conversion */
-} end_packed_struct;
+  uint8_t channel_id: 4;      /* This will be the channel number returned in struct adc_msg_s for a conversion */
+  uint16_t adc_value : 12;     /* Raw data from ADC */
+};
 
 /****************************************************************************
  * Public Function Prototypes

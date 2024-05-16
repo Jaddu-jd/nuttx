@@ -149,7 +149,6 @@ int stm32_bringup(void)
 #endif
 
 #ifdef CONFIG_ADC
-  struct spi_dev_s *spi1;
   /* Initialize ADC and register the ADC device. */
   ret = stm32_adc_setup();
   if (ret < 0)
@@ -162,7 +161,7 @@ int stm32_bringup(void)
 
   syslog(LOG_INFO,"[BRINGUP] INFO: Initializing SPI Bus 2");
   spi2 = stm32_spibus_initialize(2);
-  if(!spi1){
+  if(!spi2){
     syslog(LOG_ERR, "[BRINGUP] ERROR: stm32_spibus_initialize() failed for SPI 2: %d \n", ret);
     printf("Failed to initialize SPI Bus 2");
   }
