@@ -29,13 +29,12 @@
 #include <nuttx/spi/spi.h>
 #include <stdint.h>
 
-#if defined(CONFIG_ADC_ADS7953)
 
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
 
-/* LTC1867L Configuration ***************************************************/
+/* ADS7953 Configuration ***************************************************/
 
 /*commands to set the modes of the ADC*/
 #define 		MANUAL_MODE_1  			0x1A
@@ -66,18 +65,22 @@
  * Public Types
  ****************************************************************************/
 
+struct ads7953_config_s
+{
+  /* For users on SPI.
+   *
+   *  spi_devid : the SPI master's slave-select number
+   *              for the chip, as used in SPI_SELECT(..., dev_id, ...)
+   *  spi       : the SPI master device, as used in SPI_SELECT(spi, ..., ...)
+   */
 
-// enum ltc1867l_analog_input_mode_e
-// {
-//   LTC1867L_UNIPOLAR = LTC1867L_CONFIG_BIT_UNI,
-//   LTC1867L_BIPOLAR = 0,
-// };
+  FAR struct spi_dev_s *spi;
+  int spi_devid;
+};
 
 begin_packed_struct struct ads7953_channel_config_s
 {
-  uint8_t channel;                                                     /* This will be the channel number returned in struct adc_msg_s for a conversion */
-//   enum ltc1867l_analog_multiplexer_config_e analog_multiplexer_config; /* Analog multiplexer configuration */
-//   enum ltc1867l_analog_input_mode_e analog_inputmode;                  /* Analog input mode */
+  uint8_t channel;      /* This will be the channel number returned in struct adc_msg_s for a conversion */
 } end_packed_struct;
 
 /****************************************************************************
@@ -85,19 +88,16 @@ begin_packed_struct struct ads7953_channel_config_s
  ****************************************************************************/
 
 /****************************************************************************
- * Name: ltc1867l_register
+ * Name: adds7953_register
  *
  * Description:
- *   Register the LTC1867L character device as 'devpath'
+ *   Register the ads7953 character device as 'devpath'
  *
  * Input Parameters:
  *   devpath - The full path to the driver to register. E.g., "/dev/adc0"
  *   spi - An instance of the SPI interface to use to communicate with
- *     LTC1867L
- *   devno - SPI device number
- *   channel_config - A pointer to an array which holds the configuration
- *     for each sampled channel.
- *   channel_config_count - Number of channels to sample
+ *     ads7953
+ *   spidev - SPI device number
  *
  * Returned Value:
  *   Zero (OK) on success; a negated errno value on failure.
@@ -107,5 +107,4 @@ begin_packed_struct struct ads7953_channel_config_s
 int ads7953_register(FAR const char *devpath,
                      FAR struct spi_dev_s *spi, int spidev);
 
-#endif /* CONFIG_ADC_LTC1867L */
-#endif /* __INCLUDE_NUTTX_ANALOG_LTC1867L_H */
+#endif /* __INCLUDE_NUTTX_ANALOG_ADS7953 */

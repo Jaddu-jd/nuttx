@@ -1,3 +1,27 @@
+/****************************************************************************
+ * drivers/analog/ads7953.c
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.  The
+ * ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the
+ * License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ ****************************************************************************/
+
+/****************************************************************************
+ * Included Files
+ ****************************************************************************/
+
 #include <nuttx/config.h>
 
 #include <sys/types.h>
@@ -16,8 +40,16 @@
 #include <nuttx/analog/ads7953.h>
 #include <nuttx/mutex.h>
 
+/****************************************************************************
+ * Pre-processor Definitions
+ ****************************************************************************/
+
 #define ADS7953_SPI_MODE       (SPIDEV_MODE0)
 #define CONFIG_ADS7953_SPI_FREQUENCY    1000000
+
+/****************************************************************************
+ * Private Types
+ ****************************************************************************/
 
 struct ads7953_dev_s
 {
@@ -30,21 +62,31 @@ struct ads7953_dev_s
   mutex_t lock;
 };
 
+/****************************************************************************
+ * Private Function Prototypes
+ ****************************************************************************/
+
 /* Standard character drivers */
+
 static int ads7953_open(FAR struct file *filep);
 static ssize_t ads7953_read(FAR struct file *filep, FAR char *buffer,size_t buflen);
 static ssize_t ads7953_write(FAR struct file *filep, FAR const char *buffer,size_t buflen);
 static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg);
 
-/* Drivers used to actually interact with the hardware (SPI) */
+/* functions used to actually interact with the hardware (SPI) */
+
 static void ads7953_write16(FAR struct ads7953_dev_s *priv, uint8_t *cmd);
 static void ads7953_read16(FAR struct ads7953_dev_s *priv, uint8_t *cmd, uint8_t *data);
+
+/****************************************************************************
+ * Private Data
+ ****************************************************************************/
 
 /* This is for upper level file operation to access from custom applications */
 static const struct file_operations g_ads7953ops =
 {
     ads7953_open,   /* open */
-    NULL,           /* close */
+    NULL,           /* close not used */
     ads7953_read,   /* read */
     ads7953_write,  /* write */
     NULL,           /* seek not used */
@@ -52,7 +94,7 @@ static const struct file_operations g_ads7953ops =
 };
 
 /****************************************************************************
- * Public Functions
+ * Private Functions
  ****************************************************************************/
 
 static inline void ads7953_configspi(FAR struct spi_dev_s *spi){
@@ -62,12 +104,10 @@ static inline void ads7953_configspi(FAR struct spi_dev_s *spi){
     SPI_SETFREQUENCY(spi, CONFIG_ADS7953_SPI_FREQUENCY);
 }
 
-/*
-* @brief    function to write/send the data to SPI 
-*           these functions are not called by the upper level applications
-*           
-*     
-*/
+/****************************************************************************
+ * Name: ads7953_read16
+ ****************************************************************************/
+
 static void ads7953_write16(FAR struct ads7953_dev_s *priv, uint8_t *cmd){
   //if preemption is enabled and IRQ is required, use enter_critical_section() function 
   SPI_LOCK(priv->spi, true);    //if thread lock then it is required, otherwise not
@@ -80,6 +120,10 @@ static void ads7953_write16(FAR struct ads7953_dev_s *priv, uint8_t *cmd){
   return;
 }
 
+/****************************************************************************
+ * Name: ads7953_read16
+ ****************************************************************************/
+
 static void ads7953_read16(FAR struct ads7953_dev_s *priv, uint8_t *cmd, uint8_t *data){
   
   SPI_LOCK(priv->spi, true);
@@ -91,6 +135,10 @@ static void ads7953_read16(FAR struct ads7953_dev_s *priv, uint8_t *cmd, uint8_t
   return;
 }
 
+/****************************************************************************
+ * Name: ads7953_open
+ ****************************************************************************/
+
 static int ads7953_open(FAR struct file *filep)
 {
   printf("Opening the ads7953 file");
@@ -99,6 +147,10 @@ static int ads7953_open(FAR struct file *filep)
   printf("Opened the ADS7953 file \n");
   return OK;
 }
+
+/****************************************************************************
+ * Name: ads7953_read
+ ****************************************************************************/
 
 static ssize_t ads7953_read(FAR struct file *filep, FAR char *buffer,
                             size_t buflen)
@@ -127,13 +179,20 @@ static ssize_t ads7953_write(FAR struct file *filep, FAR const char *buffer,
   ads7953_write16(priv, (int16_t )buffer); //maybe mutex is required but the actual use of it is not well understood so skip for now
 }
 
-// static ssize_t ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg){
 
-// }
-
-/* 
-*
-*/
+/****************************************************************************
+ * Name: ads7953_ioctl
+ * 
+ * Description: 
+ *   ioctl/special commands to allow application layer to access the hardware directly bypassing the read()/write() commands. 
+ *   External ADC needs to use IOCTL commands because it needs to write into registers directly    
+ * 
+ * Input Parameters:
+ *  
+ * 
+ * Return Value:
+ *   Zero on success; non-zero value on failure
+ ****************************************************************************/
 static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 {
   FAR struct inode *inode = filep->f_inode;
@@ -190,112 +249,6 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
           printf("Data from read function: %d \n", *ptr);
         }
         break;
-      
-      
-      /* Read the configuration register. Arg: uint8_t* pointer */
-
-      // case SNIOC_READCONF:
-      //   {
-      //     FAR uint8_t *ptr = (FAR uint8_t *)((uintptr_t)arg);
-      //     DEBUGASSERT(ptr != NULL);
-      //     *ptr = adt7320_read_reg8(priv, ADT7320_CONF_REG);
-      //   }
-      //   break;
-
-      /* Write to the configuration register. Arg:  uint8_t value */
-
-      // case SNIOC_WRITECONF:
-      //   adt7320_write_reg8(priv, ADT7320_CONF_REG, (uint8_t)arg);
-      //   break;
-
-      /* Report samples in Fahrenheit */
-
-      // case SNIOC_FAHRENHEIT:
-      //   priv->fahrenheit = true;
-      //   sninfo("Fahrenheit\n");
-      //   break;
-
-      /* Report samples in Celsius */
-
-      // case SNIOC_CENTIGRADE:
-      //   priv->fahrenheit = false;
-      //   sninfo("Celsius\n");
-      //   break;
-
-      /* Read the critical temperature register. Arg: b16_t* pointer */
-
-      // case SNIOC_READTCRIT:
-      //   {
-      //     FAR b16_t *ptr = (FAR b16_t *)((uintptr_t)arg);
-      //     int16_t temp_raw;
-      //     DEBUGASSERT(ptr != NULL);
-      //     temp_raw = adt7320_read_reg16(priv, ADT7320_TCRIT_REG);
-      //     *ptr = b8tob16(temp_raw << 1);
-      //   }
-      //   break;
-
-      /* Write to the critical temperature register. Arg: b16_t value */
-
-      // case SNIOC_WRITETCRIT:
-      //   adt7320_write_reg16(priv, ADT7320_TCRIT_REG,
-      //                       b16tob8((b16_t)arg) >> 1);
-      //   break;
-
-      /* Read the hysteresis temperature register. Arg: b16_t* */
-
-      // case SNIOC_READTHYS:
-      //   {
-      //     FAR b16_t *ptr = (FAR b16_t *)((uintptr_t)arg);
-      //     uint8_t tmp;
-      //     DEBUGASSERT(ptr != NULL);
-      //     tmp = adt7320_read_reg8(priv, ADT7320_THYST_REG);
-      //     *ptr = uitoub16(tmp);
-      //   }
-      //   break;
-
-      /* Write to the hysteresis temperature register. Arg: b16_t value */
-
-      // case SNIOC_WRITETHYS:
-      //   adt7320_write_reg8(priv, ADT7320_THYST_REG, ub16toi((b16_t)arg));
-      //   break;
-
-      /* Read the low temperature register. Arg: b16_t* pointer */
-
-      // case SNIOC_READTLOW:
-      //   {
-      //     FAR b16_t *ptr = (FAR b16_t *)((uintptr_t)arg);
-      //     int16_t temp_raw;
-      //     DEBUGASSERT(ptr != NULL);
-      //     temp_raw = adt7320_read_reg16(priv, ADT7320_TLOW_REG);
-      //     *ptr = b8tob16(temp_raw << 1);
-      //   }
-      //   break;
-
-      /* Write to the low temperature register. Arg: b16_t value */
-
-      // case SNIOC_WRITETLOW:
-      //   adt7320_write_reg16(priv, ADT7320_TLOW_REG,
-      //                       b16tob8((b16_t)arg) >> 1);
-      //   break;
-
-      /* Read the high temperature register. Arg: b16_t* pointer */
-
-      // case SNIOC_READTHIGH:
-      //   {
-      //     FAR b16_t *ptr = (FAR b16_t *)((uintptr_t)arg);
-      //     int16_t temp_raw;
-      //     DEBUGASSERT(ptr != NULL);
-      //     temp_raw = adt7320_read_reg16(priv, ADT7320_THIGH_REG);
-      //     *ptr = b8tob16(temp_raw << 1);
-      //   }
-      //   break;
-
-      /* Write to the high temperature register. Arg: b16_t value */
-
-      // case SNIOC_WRITETHIGH:
-      //   adt7320_write_reg16(priv, ADT7320_THIGH_REG,
-      //                       b16tob8((b16_t)arg) >> 1);
-      //   break;
 
       default:
         sninfo("Unrecognized cmd: %d\n", cmd);
@@ -305,10 +258,26 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
   return ret;
 }
-/*
-*  @brief    this is the first step of running any sensor
-*            registers the device and ports it, creating a virtual file
-*/
+
+/****************************************************************************
+ * Public Functions
+ ****************************************************************************/
+
+/****************************************************************************
+ * Name: ads7953_register
+ *
+ * Description:
+ *   Register the ADS7953 character device as 'devpath'
+ *
+ * Input Parameters:
+ *   devpath - The full path to the driver to register. E.g., "/dev/ext_adc1"
+ *   spi - An instance of the SPI bus to use to communicate with ADS7953
+ *   spidev - The SPI device number used to select the correct CS line
+ *
+ * Returned Value:
+ *   Zero (OK) on success; a negated errno value on failure.
+ *
+ ****************************************************************************/
 int ads7953_register(FAR const char *devpath,
                      FAR struct spi_dev_s *spi, int spidev)
 {
@@ -339,5 +308,5 @@ int ads7953_register(FAR const char *devpath,
       nxmutex_destroy(&priv->lock);
       kmm_free(priv);
     }
-  return ret;
+  return OK;
 }

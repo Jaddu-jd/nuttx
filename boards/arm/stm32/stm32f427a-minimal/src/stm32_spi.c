@@ -64,7 +64,9 @@ struct spi_dev_s *g_spidev5 = NULL;
 
 void weak_function stm32_spidev_initialize(void)
 {
+  #ifdef CONFIG_ADC_ADS7953
     stm32_configgpio(GPIO_ADS7953_CS);
+  #endif
 }
 
 /****************************************************************************
@@ -113,16 +115,14 @@ void stm32_spi2select(struct spi_dev_s *dev,
                       uint32_t devid,
                       bool selected)
 {
-  spiinfo("devid: %d CS: %d\n",
-         (int)devid, selected);
-  printf("devid: %d CS: %d\n",
-         (int)devid, selected );
-  stm32_gpiowrite(GPIO_ADS7953_CS, !selected);
+  #ifdef CONFIG_ADC_ADS7953
+    spiinfo("devid: %d CS: %d\n", (int)devid, selected);
+     stm32_gpiowrite(GPIO_ADS7953_CS, !selected);
+  #endif //CONFIG_ADC_ADS7953
 }
 
 uint8_t stm32_spi2status(struct spi_dev_s *dev, uint32_t devid)
 {
-  // stm32_gpiowrite(GPIO_ADS7953_CS, selected);
   return 0;
 }
 #endif
