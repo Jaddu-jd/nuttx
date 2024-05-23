@@ -503,6 +503,16 @@ FAR struct mtd_dev_s *rammtd_initialize(FAR uint8_t *start, size_t size);
 FAR struct mtd_dev_s *ramtron_initialize(FAR struct spi_dev_s *dev);
 
 /****************************************************************************
+ * Name: mt25ql_initialize
+ *
+ * Description:
+ *   Initializes the for SPI-based MT25QL (1Gbit, 2Gbit, 512MBit).
+ *
+ ****************************************************************************/
+
+FAR struct mtd_dev_s *mt25ql_initialize(FAR struct spi_dev_s *dev);
+
+/****************************************************************************
  * Name: sst25_initialize
  *
  * Description:

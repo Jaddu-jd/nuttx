@@ -29,15 +29,6 @@ if(CONFIG_ARCH_IDLE_CUSTOM)
   list(APPEND SRCS stm32_idle.c)
 endif()
 
-if(CONFIG_STM32_FMC)
-  list(APPEND SRCS stm32_extmem.c)
-endif()
-
-if(CONFIG_STM32_OTGHS)
-  list(APPEND SRCS stm32_usb.c)
-endif()
-
-
 if(CONFIG_PWM)
   list(APPEND SRCS stm32_pwm.c)
 endif()
@@ -46,11 +37,7 @@ if(CONFIG_ADC)
   list(APPEND SRCS stm32_adc.c)
 endif()
 
-if(CONFIG_STM32_CAN_CHARDRIVER)
-  list(APPEND SRCS stm32_can.c)
-endif()
-
-if(CONFIG_STM32F427V_HIGHPRI)
+if(CONFIG_STM32F427A_HIGHPRI)
   list(APPEND SRCS stm32_highpri.c)
 endif()
 

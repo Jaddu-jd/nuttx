@@ -259,14 +259,12 @@ static void lis3mdl_read_magnetic_data(FAR struct lis3mdl_dev_s *dev,
   SPI_LOCK(dev->spi, true);
 
   /* Set CS to low which selects the LIS3MDL */
-
   SPI_SELECT(dev->spi, dev->config->spi_devid, true);
 
   /* Transmit the register address from where we want to start reading
    * 0x80 -> MSB is set -> Read Indication 0x40 -> MSB-1 (MS-Bit) is
    * set -> auto increment of address when reading multiple bytes.
    */
-
   SPI_SEND(dev->spi, (LIS3MDL_OUT_X_L_REG | 0x80 | 0x40)); /* RX */
   *x_mag  = ((uint16_t) (SPI_SEND(dev->spi, 0)) << 0);     /* LSB */
   *x_mag |= ((uint16_t) (SPI_SEND(dev->spi, 0)) << 8);     /* MSB */
@@ -278,7 +276,6 @@ static void lis3mdl_read_magnetic_data(FAR struct lis3mdl_dev_s *dev,
   *z_mag |= ((uint16_t) (SPI_SEND(dev->spi, 0)) << 8);     /* MSB */
 
   /* Set CS to high which deselects the LIS3MDL */
-
   SPI_SELECT(dev->spi, dev->config->spi_devid, false);
 
   /* Unlock the SPI bus */
@@ -316,7 +313,6 @@ static void lis3mdl_read_temperature(FAR struct lis3mdl_dev_s *dev,
   *temperature |= ((uint16_t) (SPI_SEND(dev->spi, 0)) << 8);    /* MSB */
 
   /* Set CS to high which deselects the LIS3MDL */
-
   SPI_SELECT(dev->spi, dev->config->spi_devid, false);
 
   /* Unlock the SPI bus */

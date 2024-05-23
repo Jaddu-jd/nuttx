@@ -28,6 +28,7 @@
 #include <nuttx/config.h>
 #include <nuttx/compiler.h>
 #include <stdint.h>
+#include <stdio.h>
 
 
 #include <arch/stm32/chip.h>
@@ -42,55 +43,18 @@
 
 #define HAVE_PROC       1
 #define HAVE_USBDEV     1
-#define HAVE_USBHOST    1
 #define HAVE_USBMONITOR 1
 
 /* Can't support USB host or device features if USB OTG HS is not enabled */
 
-#ifndef CONFIG_STM32_OTGHS
+#ifndef CONFIG_STM32_OTGFS
 #  undef HAVE_USBDEV
-#  undef HAVE_USBHOST
 #endif
 
 /* Can't support USB device monitor if USB device is not enabled */
 
 #ifndef CONFIG_USBDEV
 #  undef HAVE_USBDEV
-#endif
-
-/* Can't support USB host is USB host is not enabled */
-
-#ifndef CONFIG_USBHOST
-#  undef HAVE_USBHOST
-#endif
-
-/* Check if we should enable the USB monitor before starting NSH */
-
-#ifndef CONFIG_USBMONITOR
-#  undef HAVE_USBMONITOR
-#endif
-
-#ifndef HAVE_USBDEV
-#  undef CONFIG_USBDEV_TRACE
-#endif
-
-#ifndef HAVE_USBHOST
-#  undef CONFIG_USBHOST_TRACE
-#endif
-
-#if !defined(CONFIG_USBDEV_TRACE) && !defined(CONFIG_USBHOST_TRACE)
-#  undef HAVE_USBMONITOR
-#endif
-
-/* Check if we have the procfs file system */
-
-#if !defined(CONFIG_FS_PROCFS)
-#  undef HAVE_PROC
-#endif
-
-#if defined(HAVE_PROC) && defined(CONFIG_DISABLE_MOUNTPOINT)
-#  warning Mountpoints disabled.  No procfs support
-#  undef HAVE_PROC
 #endif
 
 /* How many SPI modules does this chip support? */
@@ -101,32 +65,76 @@
 #  undef CONFIG_STM32_SPI3
 #  undef CONFIG_STM32_SPI4
 #  undef CONFIG_STM32_SPI5
-#  undef CONFIG_STM32_SPI6
 #elif STM32_NSPI < 2
 #  undef CONFIG_STM32_SPI2
 #  undef CONFIG_STM32_SPI3
 #  undef CONFIG_STM32_SPI4
 #  undef CONFIG_STM32_SPI5
-#  undef CONFIG_STM32_SPI6
 #elif STM32_NSPI < 3
 #  undef CONFIG_STM32_SPI3
 #  undef CONFIG_STM32_SPI4
 #  undef CONFIG_STM32_SPI5
-#  undef CONFIG_STM32_SPI6
 #elif STM32_NSPI < 4
 #  undef CONFIG_STM32_SPI4
 #  undef CONFIG_STM32_SPI5
-#  undef CONFIG_STM32_SPI6
 #elif STM32_NSPI < 5
 #  undef CONFIG_STM32_SPI5
-#  undef CONFIG_STM32_SPI6
-#elif STM32_NSPI < 6
-#  undef CONFIG_STM32_SPI6
 #endif
 
 
 /* STM32F427 minimal board GPIOs ************************************************/
 
+
+/* GPIO Definitions *********************************************************/
+
+/* Watchdog and Reset control GPIOs */
+// #define GPIO_WD_WDI			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTH|GPIO_PIN2)
+#define GPIO_GBL_RST			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTI|GPIO_PIN10)
+
+/* KILL SWITCH control and monitoring GPIOs*/
+#define GPIO_KILL_SW_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN15)
+/* KILL Switch 1 GPIOs */
+#define GPIO_KILL_SW1_STAT		(GPIO_INPUT|GPIO_FLOAT|GPIO_PORTG|GPIO_PIN8)
+#define GPIO_KILL_SW1_NEG		(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTD|GPIO_PIN12)
+#define GPIO_KILL_SW1_POS		(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN2)
+
+/* KILL Switch 2 GPOIs */  //(GPIO_MODE|GPIO_PULL_DEF|GPIO_SPEED|GPIO_OUTPUT|GPIO_PORT|GPIO_PIN|)
+#define GPIO_KILL_SW2_STAT		(GPIO_INPUT|GPIO_FLOAT|GPIO_PORTG|GPIO_PIN7)
+#define GPIO_KILL_SW2_NEG		(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN4)
+#define GPIO_KILL_SW2_POS		(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN5)
+
+
+/* Power supply control GPIOs. */
+#define GPIO_DCDC_MSN_3V3_2_EN		(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTH|GPIO_PIN14)
+#define GPIO_DCDC_4V_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTI|GPIO_PIN4)
+#define GPIO_DCDC_5V_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTE|GPIO_PIN3)
+
+#define GPIO_3V3_COM_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTH|GPIO_PIN11)
+#define GPIO_MSN_3V3_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTH|GPIO_PIN5)
+#define GPIO_COM_4V_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTH|GPIO_PIN12)
+#define GPIO_MSN_5V_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN12)
+#define GPIO_BURNER_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTH|GPIO_PIN4)
+#define GPIO_UNREG_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN1)
+
+/* MSN Enable GPIOs */
+#define GPIO_MSN1_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN3)		//GPIO_1 On Board
+#define GPIO_MSN2_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN8)		//GPIO_2 On Board
+#define GPIO_MSN3_EN			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTF|GPIO_PIN10)	//GPIO_3 On Board
+
+/* Flash Memory MUX Control GPIOs */
+#define GPIO_SFM_MODE			(GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTI|GPIO_PIN7)
+#define GPIO_MUX_EN			    (GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTG|GPIO_PIN6)
+
+#define GPIO_SFM_CS		    	(GPIO_OUTPUT|GPIO_PULLUP|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTI|GPIO_PIN6)
+#define GPIO_MFM_CS			    (GPIO_OUTPUT|GPIO_PULLUP|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTD|GPIO_PIN3)
+
+#define GPIO_LIS3MDL_INT		(GPIO_INPUT|GPIO_FLOAT|GPIO_PORTF|GPIO_PIN15)
+#define GPIO_LIS3MDL_CS			(GPIO_OUTPUT|GPIO_PULLUP|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTF|GPIO_PIN12)
+#define GPIO_LIS3MDL_DRDY		(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTH|GPIO_PIN3)
+#define GPIO_MPU_INT			(GPIO_INPUT|GPIO_FLOAT|GPIO_PORTG|GPIO_PIN0)
+#define GPIO_MPU_CS			    (GPIO_OUTPUT|GPIO_PULLUP|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTH|GPIO_PIN10)
+
+#define GPIO_EXT_ADC1_CS		(GPIO_OUTPUT|GPIO_PULLUP|GPIO_SPEED_2MHz|GPIO_OUTPUT_SET|GPIO_PORTD|GPIO_PIN9)
 
 
 /* PWM
@@ -185,47 +193,6 @@ int stm32_bringup(void);
 void weak_function stm32_spidev_initialize(void);
 
 /****************************************************************************
- * Name: stm32_usbinitialize
- *
- * Description:
- *   Called from stm32_usbinitialize very early in inialization to setup USB-
- *   related GPIO pins for the STM32F429Discovery board.
- *
- ****************************************************************************/
-
-#ifdef CONFIG_STM32_OTGHS
-void weak_function stm32_usbinitialize(void);
-#endif
-
-/****************************************************************************
- * Name: stm32_usbhost_initialize
- *
- * Description:
- *   Called at application startup time to initialize the USB host
- *   functionality. This function will start a thread that will monitor for
- *   device connection/disconnection events.
- *
- ****************************************************************************/
-
-#if defined(CONFIG_STM32_OTGHS) && defined(CONFIG_USBHOST)
-int stm32_usbhost_initialize(void);
-#endif
-
-
-/****************************************************************************
- * Name: stm32_sdram_initialize
- *
- * Description:
- *   Called from stm32_bringup to initialize external SDRAM access.
- *
- ****************************************************************************/
-
-#ifdef CONFIG_STM32_FMC
-void stm32_sdram_initialize(void);
-#endif
-
-
-/****************************************************************************
  * Name: stm32_adc_setup
  *
  * Description:
@@ -235,18 +202,6 @@ void stm32_sdram_initialize(void);
 
 #ifdef CONFIG_ADC
 int stm32_adc_setup(void);
-#endif
-
-/****************************************************************************
- * Name: stm32_can_setup
- *
- * Description:
- *  Initialize CAN and register the CAN device
- *
- ****************************************************************************/
-
-#ifdef CONFIG_STM32_CAN_CHARDRIVER
-int stm32_can_setup(void);
 #endif
 
 #endif /* __ASSEMBLY__ */

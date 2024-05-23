@@ -181,7 +181,7 @@
 #elif defined(CONFIG_STM32_STM32F4XXX)
 #  if defined (CONFIG_STM32_STM32F427A)
 #    if defined(CONFIG_STM32_USE_LEGACY_PINMAP)
-#      include "hardware/stm32f42ax_pinmap_legacy.h"
+#      include "hardware/stm32f427ax_pinmap_legacy.h"
 #    else
 #      include "hardware/stm32f427ax_pinmap.h"
 #    endif

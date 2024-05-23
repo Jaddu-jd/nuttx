@@ -67,6 +67,28 @@ void weak_function stm32_spidev_initialize(void)
   #ifdef CONFIG_ADC_ADS7953
     stm32_configgpio(GPIO_ADS7953_CS);
   #endif
+  #ifdef CONFIG_MT25QL
+  printf("Configure GPIO for MT25QL flash memory.\n");
+  stm32_configgpio(GPIO_MFM_CS);
+  stm32_configgpio(GPIO_SFM_CS);
+  stm32_configgpio(GPIO_MUX_EN);
+  stm32_configgpio(GPIO_SFM_MODE);
+
+  stm32_gpiowrite(GPIO_MFM_CS, true);
+  stm32_gpiowrite(GPIO_SFM_CS, true);
+  stm32_gpiowrite(GPIO_SFM_MODE, true);
+  stm32_gpiowrite(GPIO_MUX_EN, true);
+  #endif
+
+  #  ifdef CONFIG_SENSORS_LIS3MDL
+  /* Configure the SPI-based LIS3MDL MAG chip select GPIO */
+  printf("Configure GPIO for Lis3mdl SPI5 CS\n");
+  stm32_configgpio(GPIO_LIS3MDL_CS);
+  stm32_gpiowrite(GPIO_LIS3MDL_CS, true);
+  stm32_configgpio(GPIO_LIS3MDL_DRDY);
+  stm32_configgpio(GPIO_LIS3MDL_INT);
+  #  endif
+
 }
 
 /****************************************************************************
@@ -133,6 +155,12 @@ void stm32_spi3select(struct spi_dev_s *dev,
 {
   spiinfo("devid: %d CS: %s\n",
           (int)devid, selected ? "assert" : "de-assert");
+  switch (devid)
+  {
+    case SPIDEV_FLASH(0):
+      stm32_gpiowrite(GPIO_MFM_CS, !selected);
+      break;
+  }
 }
 
 uint8_t stm32_spi3status(struct spi_dev_s *dev, uint32_t devid)
@@ -146,6 +174,13 @@ void stm32_spi4select(struct spi_dev_s *dev,
                       uint32_t devid, bool selected)
 {
   spiinfo("devid: %%d CS: %s\n",
+            (int)devid, selected ? "assert" : "de-assert");
+  switch (devid)
+  {
+    case SPIDEV_FLASH(0):
+      stm32_gpiowrite(GPIO_SFM_CS, !selected);
+      break;
+  }
             (int)devid, selected ? "assert" : "de-assert");
 }
 
@@ -161,23 +196,23 @@ void stm32_spi5select(struct spi_dev_s *dev,
 {
   spiinfo("devid: %%d CS: %s\n",
             (int)devid, selected ? "assert" : "de-assert");
+
+  switch(devid)
+  {
+    case SPIDEV_USER(0):
+      /* Set the CS pin for mag0*/
+      stm32_gpiowrite(GPIO_LIS3MDL_CS, !selected);
+      break;
+    case SPIDEV_IMU(0):
+      /* Set the CS pin for IMU0*/
+      stm32_gpiowrite(GPIO_MPU_CS, !selected);
+      break;
+
+  }
+            (int)devid, selected ? "assert" : "de-assert");
 }
 
 uint8_t stm32_spi5status(struct spi_dev_s *dev, uint32_t devid)
-{
-  return 0;
-}
-#endif
-
-#ifdef CONFIG_STM32_SPI6
-void stm32_spi6select(struct spi_dev_s *dev,
-                      uint32_t devid, bool selected)
-{
-  spiinfo("devid: %%d CS: %s\n",
-            (int)devid, selected ? "assert" : "de-assert");)
-}
-
-uint8_t stm32_spi6status(struct spi_dev_s *dev, uint32_t devid)
 {
   return 0;
 }
@@ -243,14 +278,7 @@ int stm32_spi5cmddata(struct spi_dev_s *dev, uint32_t devid, bool cmd)
 }
 #endif
 
-#ifdef CONFIG_STM32_SPI6
-int stm32_spi6cmddata(struct spi_dev_s *dev, uint32_t devid, bool cmd)
-{
-  return -ENODEV;
-}
-#endif
-
 #endif /* CONFIG_SPI_CMDDATA */
 
 
-#endif /* CONFIG_STM32_SPI1 || ... CONFIG_STM32_SPI6 */
+#endif /* CONFIG_STM32_SPI1 || ... CONFIG_STM32_SPI5 */

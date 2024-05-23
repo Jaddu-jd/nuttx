@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/arm/stm32/stm32f42a-minimal/src/stm32_boot.c
+ * boards/arm/stm32/stm32f427a-minimal/src/stm32_boot.c
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -50,6 +50,9 @@
 
 void stm32_boardinitialize(void)
 {
+
+  printf("[boot] Initializing board.\n");
+  
 #if defined(CONFIG_STM32_SPI1) || defined(CONFIG_STM32_SPI2) || \
     defined(CONFIG_STM32_SPI3) || defined(CONFIG_STM32_SPI4) || \
     defined(CONFIG_STM32_SPI5)
@@ -63,29 +66,6 @@ void stm32_boardinitialize(void)
       stm32_spidev_initialize();
     }
 #endif
-
-#ifdef CONFIG_STM32_OTGHS
-  /* Initialize USB if the 1) OTG HS controller is in the configuration and
-   * 2) disabled, and 3) the weak function stm32_usbinitialize() has been
-   * brought into the build. Presumably either CONFIG_USBDEV or
-   * CONFIG_USBHOST is also selected.
-   */
-
-  if (stm32_usbinitialize)
-    {
-      stm32_usbinitialize();
-    }
-#endif
-
-#ifdef CONFIG_ARCH_LEDS
-  /* Configure on-board LEDs if LED support has been selected. */
-
-  board_autoled_initialize();
-#endif
-
-// #ifdef CONFIG_STM32_FMC
-//   stm32_sdram_initialize();
-// #endif
 
 #ifdef HAVE_CCM_HEAP
   /* Initialize CCM allocator */
