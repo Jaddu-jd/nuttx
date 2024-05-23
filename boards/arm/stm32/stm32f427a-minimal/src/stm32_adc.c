@@ -75,8 +75,8 @@
 
 /* TODO DMA */
 
-#define ADC1_NCHANNELS 8
-#define ADC3_NCHANNELS 7
+#define ADC1_NCHANNELS 14
+#define ADC3_NCHANNELS 1
 
 /****************************************************************************
  * Private Function Prototypes
@@ -94,28 +94,43 @@
 
 /* Identifying number of each ADC channel (even if NCHANNELS is less ) */
 
-static const uint8_t g_chanlist1[8] =
+static const uint8_t g_chanlist1[DEV1_NCHANNELS] =
 {
+  0,
+  2,
+  3,
   4,
   5,
   6,
   7,
   8,
   9,
+  10,
+  11,
+  12,
   14,
   15,
 };
 
 /* Configurations of pins used by each ADC channel */
 
-static const uint32_t g_pinlist1[8]  =
+static const uint32_t g_pinlist1[DEV1_NCHANNELS]  =
 {
+  GPIO_ADC3_IN0,                /* PA0/J5   UNREG CURRENT               ADC1/2/3 COMP. */  
+
+  GPIO_ADC3_IN2,                /* PA2/K2   MAIN 3V3 CURRENT            ADC1/2/3 COMP. */
+  GPIO_ADC3_IN3,                /* PA3/K3   3V3 COM CURRENT             ADC1/2/3 COMP. */
+
   GPIO_ADC1_IN4,                /* PA4/N2   5V CURRENT                  ADC1/2 COMP. */
   GPIO_ADC1_IN5,                /* PA5/M3   BATTERY MONITOR             ADC1/2 COMP. */
   GPIO_ADC1_IN6,                /* PA6/N3   SOLAR PANEL 1 CURRENT       ADC1/2 COMP. */
   GPIO_ADC1_IN7,                /* PA7/K4   3V3 2 CURRENT               ADC1/2 COMP. */
   GPIO_ADC1_IN8,                /* PB0/N4   SOLAR PANEL 4 CURRENT       ADC1/2 COMP. */
   GPIO_ADC1_IN9,                /* PB1/K5   SOLAR PANEL 5 CURRENT       ADC1/2 COMP. */
+
+  GPIO_ADC3_IN10,               /* PC0/G6   BATTERY CURRENT             ADC1/2/3 COMP. */
+  GPIO_ADC3_IN11,               /* PC1/H5   SOLAR PANEL TOTAL CURRENT   ADC1/2/3 COMP. */
+  GPIO_ADC3_IN12,               /* PC2/H6   RAW CURRENT                 ADC1/2/3 COMP. */
 
   GPIO_ADC1_IN14,               /* PC4/L4   SOLAR PANEL 2 CURRENT       ADC1/2 COMP. */
   GPIO_ADC1_IN15,               /* PC5/M4   SOLAR PANEL 3 CURRENT       ADC1/2 COMP. */
@@ -127,30 +142,15 @@ static const uint32_t g_pinlist1[8]  =
 
 /* Identifying number of each ADC channel */
 
-static const uint8_t g_chanlist1[7] =
+static const uint8_t g_chanlist1[1] =
 {
-  0,
-  2,
-  3,
-  10,
-  11,
-  12,
   14,
 };
 
 /* Configurations of pins used by each ADC channel */
 
-static const uint32_t g_pinlist1[7] =
+static const uint32_t g_pinlist1[1] =
 {
-  GPIO_ADC3_IN0,                /* PA0/J5   UNREG CURRENT               ADC1/2/3 COMP. */  
-
-  GPIO_ADC3_IN2,                /* PA2/K2   MAIN 3V3 CURRENT            ADC1/2/3 COMP. */
-  GPIO_ADC3_IN3,                /* PA3/K3   3V3 COM CURRENT             ADC1/2/3 COMP. */
-
-  GPIO_ADC3_IN10,               /* PC0/G6   BATTERY CURRENT             ADC1/2/3 COMP. */
-  GPIO_ADC3_IN11,               /* PC1/H5   SOLAR PANEL TOTAL CURRENT   ADC1/2/3 COMP. */
-  GPIO_ADC3_IN12,               /* PC2/H6   RAW CURRENT                 ADC1/2/3 COMP. */
-
   GPIO_ADC3_IN14,                /* PF4/G3    4V CURRENT    ADC3 COMP. */
 };
 
@@ -166,30 +166,15 @@ static const uint32_t g_pinlist1[7] =
 
 /* Identifying number of each ADC channel */
 
-static const uint8_t g_chanlist2[7] =
+static const uint8_t g_chanlist2[1] =
 {
-  0,
-  2,
-  3,
-  10,
-  11,
-  12,
   14,
 };
 
 /* Configurations of pins used by each ADC channel */
 
-static const uint32_t g_pinlist2[7] =
+static const uint32_t g_pinlist2[1] =
 {
-  GPIO_ADC3_IN0,                /* PA0/J5   UNREG CURRENT               ADC1/2/3 COMP. */  
-
-  GPIO_ADC3_IN2,                /* PA2/K2   MAIN 3V3 CURRENT            ADC1/2/3 COMP. */
-  GPIO_ADC3_IN3,                /* PA3/K3   3V3 COM CURRENT             ADC1/2/3 COMP. */
-
-  GPIO_ADC3_IN10,               /* PC0/G6   BATTERY CURRENT             ADC1/2/3 COMP. */
-  GPIO_ADC3_IN11,               /* PC1/H5   SOLAR PANEL TOTAL CURRENT   ADC1/2/3 COMP. */
-  GPIO_ADC3_IN12,               /* PC2/H6   RAW CURRENT                 ADC1/2/3 COMP. */
-
   GPIO_ADC3_IN14,                /* PF4/G3    4V CURRENT    ADC3 COMP. */
 };
 
