@@ -36,7 +36,6 @@
 #include <nuttx/fs/fs.h>
 #include <nuttx/kmalloc.h>
 
-<<<<<<< HEAD
 #ifdef CONFIG_ADC_ADS7953
 #include <nuttx/analog/ads7953.h>
 #endif
@@ -54,7 +53,6 @@
 // #  include <nuttx/mtd/configdata.h>
 // #endif
 // #endif
-=======
 #if defined(CONFIG_MTD_MT25QL) || defined(CONFIG_MTD_PROGMEM)
 #  include <nuttx/mtd/mtd.h>
 #endif
@@ -68,22 +66,21 @@
 #  include <nuttx/mtd/configdata.h>
 #endif
 #endif
->>>>>>> 572e6a2f4abdff478fba924a913eec2e465e8231
 
 #include <nuttx/sensors/lis3mdl.h>
 
 #include "stm32.h"
 #include "stm32f427a.h"
 
-<<<<<<< HEAD
-=======
-struct mag_priv_s
+#ifdef CONFIG_SENSORS_LIS3MDL
+typedef struct mag_priv_s
 {
   struct lis3mdl_config_s dev;
   xcpt_t handler;
   void *arg;
   uint32_t intcfg;
 };
+
 
 /* IRQ/GPIO access callbacks.  These operations all hidden behind
  * callbacks to isolate the MRF24J40 driver from differences in GPIO
@@ -117,7 +114,7 @@ static struct mag_priv_s mag0 =
   .handler = NULL,
   .intcfg = GPIO_LIS3MDL_INT,
 };
->>>>>>> 572e6a2f4abdff478fba924a913eec2e465e8231
+#endif
 
 /****************************************************************************
  * Public Functions
@@ -139,7 +136,6 @@ static struct mag_priv_s mag0 =
 
 int stm32_bringup(void)
 {
-<<<<<<< HEAD
   int ret = 0;
 
 #if defined(CONFIG_STM32_SPI1) 
@@ -180,16 +176,6 @@ int stm32_bringup(void)
     }
 #endif
 
-#ifdef HAVE_USBMONITOR
-  /* Start the USB Monitor */
-
-  ret = usbmonitor_start();
-  if (ret != OK)
-    {
-      syslog(LOG_ERR, "ERROR: Failed to start USB monitor: %d\n", ret);
-    }
-#endif
-
 #ifdef CONFIG_SENSORS_L3GD20
   ret = board_l3gd20_initialize(0, 5);
   if (ret != OK)
@@ -208,23 +194,6 @@ int stm32_bringup(void)
       syslog(LOG_ERR, "ERROR: stm32_pwm_setup() failed: %d\n", ret);
     }
 #endif
-=======
-
-#if defined(CONFIG_STM32_SPI2)
-  struct spi_dev_s *spi2;
-#endif
-
-#if defined(CONFIG_STM32_SPI3)
-  struct spi_dev_s *spi3;
-#endif
-
-#if defined(CONFIG_STM32_SPI4)
-  struct spi_dev_s *spi4;
-#endif
-
-#if defined(CONFIG_STM32_SPI5)
-  struct spi_dev_s *spi5;
-#endif
 
 #if defined(CONFIG_MTD)
   struct mtd_dev_s *mtd;
@@ -236,7 +205,7 @@ int stm32_bringup(void)
 #if defined(CONFIG_MTD_PARTITION_NAMES)
   const char *partname = CONFIG_STM32F427A_FLASH_PART_NAMES;
 #endif // CONFIG_MTD_PARTITION_NAMES
-  int ret;
+
 
   /* Configure SPI-based devices */
 
@@ -326,153 +295,9 @@ int stm32_bringup(void)
           printf("ERROR: mtd->ioctl failed: %d\n", ret);
         }
 
-#ifdef CONFIG_STM32F427A_FLASH_PART
-        {
-          int partno;
-          int partsize;
-          int partoffset;
-          int partszbytes;
-          int erasesize;
-          const char *partstring = CONFIG_STM32F427A_FLASH_PART_LIST;
-          const char *ptr;
-          struct mtd_dev_s *mtd_part;
-          char  partref[16];
+#endif  /* CONFIG_MTD...*/
+#endif  /* CONFIG_STM32_SPI3 */
 
-          /* Now create a partition on the FLASH device */
-
-          partno = 0;
-          ptr = partstring;
-          partoffset = 0;
-
-          /* Get the Flash erase size */
-
-          erasesize = geo.erasesize;
-
-          while (*ptr != '\0')
-            {
-              /* Get the partition size */
-
-              partsize = atoi(ptr);
-              partszbytes = (partsize << 10); /* partsize is defined in KB */
-
-              /* Check if partition size is bigger then erase block */
-
-              if (partszbytes < erasesize)
-                {
-                  printf("ERROR: Partition size is lesser than erasesize!\n");
-                  return -1;
-                }
-
-              /* Check if partition size is multiple of erase block */
-
-              if ((partszbytes % erasesize) != 0)
-                {
-                  printf("ERROR: Partition size is not multiple of"
-                       " erasesize!\n");
-                  return -1;
-                }
-
-              mtd_part    = mtd_partition(mtd, partoffset,
-                                          partszbytes / erasesize);
-              partoffset += partszbytes / erasesize;
-
-#ifdef CONFIG_STM32F427A_FLASH_CONFIG_PART
-              /* Test if this is the config partition */
-
-              if (CONFIG_STM32F427A_FLASH_CONFIG_PART_NUMBER == partno)
-                {
-                  /* Register the partition as the config device */
-
-                  mtdconfig_register(mtd_part);
-                }
-              else
-#endif
-                {
-                  /* Now initialize a SMART Flash block device and bind it
-                   * to the MTD device.
-                   */
-
-#if defined(CONFIG_MTD_SMART) && defined(CONFIG_FS_SMARTFS)
-                  snprintf(partref, sizeof(partref), "p%d", partno);
-                  smart_initialize(CONFIG_STM32F427A_FLASH_MINOR,
-                                   mtd_part, partref);
-#endif
-                }
-
-#if defined(CONFIG_MTD_PARTITION_NAMES)
-              /* Set the partition name */
-
-              if (mtd_part == NULL)
-                {
-                  ferr("ERROR: failed to create partition %s\n", partname);
-                  return -1;
-                }
-
-              mtd_setpartitionname(mtd_part, partname);
-
-              /* Now skip to next name.  We don't need to split the string
-               * here because the MTD partition logic will only display names
-               * up to the comma, thus allowing us to use a single static
-               * name in the code.
-               */
-
-              while (*partname != ',' && *partname != '\0')
-                {
-                  /* Skip to next ',' */
-
-                  partname++;
-                }
-
-              if (*partname == ',')
-                {
-                  partname++;
-                }
-#endif
-
-              /* Update the pointer to point to the next size in the list */
-
-              while ((*ptr >= '0') && (*ptr <= '9'))
-                {
-                  ptr++;
-                }
-
-              if (*ptr == ',')
-                {
-                  ptr++;
-                }
-
-              /* Increment the part number */
-
-              partno++;
-            }
-        }
-#endif /* CONFIG_STM32F427A_FLASH_PART */
-    }
-
-#endif /* CONFIG_MTD */
-#endif /* CONFIG_STM32_SPI3 */
-
-// #if defined(CONFIG_RAMMTD) && defined(CONFIG_STM32F427A_RAMMTD)
-//   /* Create a RAM MTD device if configured */
-
-//     {
-//       uint8_t *start =
-//           kmm_malloc(CONFIG_STM32F427A_RAMMTD_SIZE * 1024);
-//       mtd = rammtd_initialize(start,
-//                               CONFIG_STM32F427A_RAMMTD_SIZE * 1024);
-//       mtd->ioctl(mtd, MTDIOC_BULKERASE, 0);
-
-//       /* Now initialize a SMART Flash block device and bind it to the MTD
-//        * device
-//        */
-
-// #if defined(CONFIG_MTD_SMART) && defined(CONFIG_FS_SMARTFS)
-//       smart_initialize(CONFIG_STM32F427A_RAMMTD_MINOR, mtd, NULL);
-// #endif
-//     }
-
-// #endif /* CONFIG_RAMMTD && CONFIG_STM32F427A_RAMMTD */
->>>>>>> 572e6a2f4abdff478fba924a913eec2e465e8231
 
 #ifdef CONFIG_ADC
   /* Initialize ADC and register the ADC device. */

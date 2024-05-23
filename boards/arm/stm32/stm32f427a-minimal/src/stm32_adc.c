@@ -75,7 +75,7 @@
 
 /* TODO DMA */
 
-#define ADC1_NCHANNELS 14
+#define ADC1_NCHANNELS 16
 #define ADC3_NCHANNELS 1
 
 /****************************************************************************
@@ -110,6 +110,8 @@ static const uint8_t g_chanlist1[DEV1_NCHANNELS] =
   12,
   14,
   15,
+  17,
+  18,
 };
 
 /* Configurations of pins used by each ADC channel */
@@ -134,6 +136,9 @@ static const uint32_t g_pinlist1[DEV1_NCHANNELS]  =
 
   GPIO_ADC1_IN14,               /* PC4/L4   SOLAR PANEL 2 CURRENT       ADC1/2 COMP. */
   GPIO_ADC1_IN15,               /* PC5/M4   SOLAR PANEL 3 CURRENT       ADC1/2 COMP. */
+
+  // ADC1_IN17,                    /* VREF INT Internal voltage reference channel    ADC1   */
+  // ADC1_IN18,                    /* TEMP_SENSE Internal Temperature sensor chanel  ADC1   */
 };
 
 #elif DEV1_PORT == 3
