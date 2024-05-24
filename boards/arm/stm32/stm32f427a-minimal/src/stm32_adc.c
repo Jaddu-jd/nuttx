@@ -110,8 +110,8 @@ static const uint8_t g_chanlist1[DEV1_NCHANNELS] =
   12,
   14,
   15,
+  16,
   17,
-  18,
 };
 
 /* Configurations of pins used by each ADC channel */
