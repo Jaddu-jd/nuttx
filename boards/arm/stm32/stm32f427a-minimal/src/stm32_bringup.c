@@ -40,10 +40,6 @@
 #include <nuttx/analog/ads7953.h>
 #endif
 
-#if defined(CONFIG_MTD_SST25XX) || defined(CONFIG_MTD_PROGMEM)
-#  include <nuttx/mtd/mtd.h>
-#endif
-
 // #ifndef CONFIG_STM32F427V_FLASH_MINOR
 // #define CONFIG_STM32F427V_FLASH_MINOR 0
 // #endif
@@ -70,8 +66,6 @@
 #endif
 #endif
 
-#include <nuttx/sensors/lis3mdl.h>
-
 #include "stm32.h"
 #include "stm32f427a.h"
 
@@ -85,7 +79,8 @@
 #endif
 
 #ifdef CONFIG_SENSORS_LIS3MDL
-
+#include <nuttx/sensors/lis3mdl.h>
+#endif
 
 #ifdef CONFIG_SENSORS_MPU60X0
   #include <nuttx/sensors/mpu60x0.h>
