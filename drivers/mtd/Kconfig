@@ -496,7 +496,7 @@ config AT24XX_FREQUENCY
 	int "AT24xx I2C bus frequency"
 	default 100000
 	---help---
-		Set the I2C frequency to use when accessing the AT24CXX EEPROM.
+		Set the I2C frequency to use when accessing the AT24CXX EEPROM. 
 		This value must represent a valid I2C speed (normally less than
 		400.000) or the driver might fail.
 
@@ -509,7 +509,7 @@ config MTD_AT25EE
 	select MTD_BYTE_WRITE
 	---help---
 		Build support for SPI-based AT25xx type EEPROMs. MTD on EEPROM can
-		perform poorly, so it is possible only usable if the EEPROM has a
+		perform poorly, so it is possible only usable if the EEPROM has a 
 		clock speed 10MHz or higher. EEPROMs that use the same commands as
 		the 25AA160 should work OK.
 
@@ -525,7 +525,7 @@ choice
 		pages so that the file system block size is, say, 128, 256 or
 		512 bytes.
 
-		In any event, the block size *must* be an even multiple of the
+		In any event, the block size *must* be an even multiple of the 
 		number of pages and, often, needs to be a factor 2.
 
 		This is up to the user to check!
@@ -694,12 +694,30 @@ config MT25Q_MEMORY_TYPE
 
 config M25P_SUBSECTOR_ERASE
 	bool "Sub-Sector Erase"
-	default n
+	default y
 	---help---
 		Some devices (such as the EON EN25F80) support a smaller erase block
 		size (4K vs 64K).  This option enables support for sub-sector erase.
 		The SMART file system can take advantage of this option if it is
 		enabled.
+
+config STM32F427A_FLASH_PART
+	bool "FLASH PART ENABLE / DISABLE"
+	default y
+	----help---
+		To partition the flash memory 
+
+config STM32F427A_FLASH_PART_LIST
+	string "Flash number of sectors in flash memory"
+	default "48188,\0"
+	---help---
+		Testing number of sectors in flash memory
+
+config STM32F427A_FLASH_CONFIG_PART
+	bool "Flash config part number"
+	default y
+	---help---
+		Config part number of flash memory
 
 endif # MTD_M25P
 
@@ -913,65 +931,6 @@ config MX25RXX_LXX
 	default n
 
 endif # MTD_MX25RXX
-
-config MTD_MT25QL
-	bool "SPI based MT25QL flash, defaulted to Extended SPI MODE"
-	default n
-	select SPI
-	---help---
-		SPI-based driver for MT5QL series flash memory
-		
-if MTD_MT25QL
-
-config MT25QL_SPIMODE
-	int "MT25QL SPI Mode"
-	default 0
-
-config MT25QL_SPIFREQUENCY
-	int "MT25QL SPI Frequency"
-	default 20000000
-	---help---
-		Max SPI speed of MT25QL flash can reach upto 133MHz.
-		Using 20MHz as a default for now.
-
-config MT25QL_MANUFACTURER
-	hex "Mt25QL Manufacturer ID"
-	default 0x20
-	---help---
-		The library also supports similar flash by  other
-		manufacturers, 0x20 is the manufacturer ID for
-		MICRON MT25QLxx serial flash.
-
-config MT25QL_MEMORY_TYPE
-	hex "Memory type of the flash"
-	default 0xBA
-	---help---
-		The commonly used and availble flash memory of MT25Q
-		class is 3.3V identified by 0xBA. The library also
-		supports the low voltage class memmory from Micron
-		identified by 0xBB.
-
-config MT25QL_SUBSECTOR_ERASE
-	bool "Sub-Sector Erase"
-	default n
-	---help---
-		Some devices support a smaller erase size (4K vs 64K).
-		This option enables support for sub-sector erase. The
-		SMART file system can take advantage of this option if
-		it is enabled.
-
-config MT25QL_4_BYTE_MODE
-	bool "Enable 4-Byte addressing mode of operation"
-	default n
-	---help---
-		By default the flash memory is configured for 3 bytes address mode
-		of operation, but it can be reonfigured to use 4-byte addresses.
-
-config MT25QL_DEBUG
-	bool "Enable driver debug feature"
-	default n
-
-endif # MTD_MT25QL
 
 config MTD_SMART
 	bool "Sector Mapped Allocation for Really Tiny (SMART) Flash support"

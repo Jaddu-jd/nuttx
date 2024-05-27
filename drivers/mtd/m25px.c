@@ -42,6 +42,7 @@
 #include <nuttx/fs/ioctl.h>
 #include <nuttx/spi/spi.h>
 #include <nuttx/mtd/mtd.h>
+#include <stdio.h>
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -208,7 +209,7 @@
 /*    Command          Value    N Description             Addr Dummy Data   */
 #define M25P_WREN      0x06  /* 1 Write Enable              0   0     0     */
 #define M25P_WRDI      0x04  /* 1 Write Disable             0   0     0     */
-#define M25P_RDID      0x9f  /* 1 Read Identification       0   0     1-3   */
+#define M25P_RDID      0x9E  /* 1 Read Identification       0   0     1-3   */
 #define M25P_RDSR      0x05  /* 1 Read Status Register      0   0     >=1   */
 #define M25P_WRSR      0x01  /* 1 Write Status Register     0   0     1     */
 #define M25P_READ      0x03  /* 1 Read Data Bytes           3   0     >=1   */
@@ -379,6 +380,11 @@ static inline int m25p_readid(struct m25p_dev_s *priv)
   /* Send the "Read ID (RDID)" command and read the first three ID bytes */
 
   SPI_SEND(priv->dev, M25P_RDID);
+  // uint8_t data1[20];
+  // SPI_EXCHANGE(priv->dev, M25P_RDID, data1, sizeof(data1));
+  // for(int j = 0; j<20 ; j++){
+  //   printf("got data[%d]: %d \n",j,data1[j]);
+  // }
   manufacturer = SPI_SEND(priv->dev, M25P_DUMMY);
   memory       = SPI_SEND(priv->dev, M25P_DUMMY);
   capacity     = SPI_SEND(priv->dev, M25P_DUMMY);
@@ -389,6 +395,8 @@ static inline int m25p_readid(struct m25p_dev_s *priv)
   m25p_unlock(priv->dev);
 
   finfo("manufacturer: %02x memory: %02x capacity: %02x\n",
+        manufacturer, memory, capacity);
+  printf("manufacturer: %02x memory: %02x capacity: %02x\n",
         manufacturer, memory, capacity);
 
   /* Check for a valid manufacturer and memory type */
@@ -508,6 +516,9 @@ static inline int m25p_readid(struct m25p_dev_s *priv)
       else if (capacity == M25P_MT25Q1G_CAPACITY)
         {
           /* Save the FLASH geometry */
+          printf("---------------------------------------------\n");
+  printf("The deviice is mt25ql M25P_MT25Q1G_CAPACITY= 0x21\n");
+          printf("---------------------------------------------\n");
 
           priv->sectorshift    = M25P_MT25Q1G_SECTOR_SHIFT;
           priv->nsectors       = M25P_MT25Q1G_NSECTORS;
@@ -1175,14 +1186,17 @@ FAR struct mtd_dev_s *m25p_initialize(FAR struct spi_dev_s *dev)
       priv->mtd.ioctl  = m25p_ioctl;
       priv->mtd.name   = "m25px";
       priv->dev        = dev;
+      printf("inside priv )))))))))))))))))))_____________________\n");
 
       /* Deselect the FLASH */
+
 
       SPI_SELECT(dev, SPIDEV_FLASH(0), false);
 
       /* Identify the FLASH chip and get its capacity */
 
       ret = m25p_readid(priv);
+      printf("got the ret as : %d\n", ret);
       if (ret != OK)
         {
           /* Unrecognized!

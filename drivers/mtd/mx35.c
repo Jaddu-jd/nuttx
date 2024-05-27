@@ -300,13 +300,16 @@ static int mx35_readid(struct mx35_dev_s *priv)
 
   mx35_lock(priv->dev);
   SPI_SELECT(priv->dev, SPIDEV_FLASH(0), true);
-
+  uint8_t dt[20];
   /* Send the "Read ID" command and read two ID bytes */
-
-  SPI_SEND(priv->dev, MX35_READ_ID);
-  SPI_SEND(priv->dev, MX35_DUMMY);
-  manufacturer = SPI_SEND(priv->dev, MX35_DUMMY);
-  capacity     = SPI_SEND(priv->dev, MX35_DUMMY);
+  SPI_EXCHANGE(priv->dev, MX35_READ_ID, dt, sizeof(dt));
+  for(int j = 0 ; j<20; j++){
+    printf("The data is data[%d] %d\n",j,dt[j]);
+  }
+  // SPI_SEND(priv->dev, MX35_READ_ID);
+  // SPI_SEND(priv->dev, MX35_DUMMY);
+  // manufacturer = SPI_SEND(priv->dev, MX35_DUMMY);
+  // capacity     = SPI_SEND(priv->dev, MX35_DUMMY);
 
   /* Deselect the FLASH and unlock the bus */
 

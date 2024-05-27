@@ -38,6 +38,7 @@
 #include <nuttx/fs/ioctl.h>
 #include <nuttx/spi/spi.h>
 #include <nuttx/mtd/mtd.h>
+#include <stdio.h>
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -145,7 +146,7 @@
 #define MX25L_ERS_SUSPEND   0xb0  /* Suspends erase            0   0  0     */
 #define MX25L_PGM_RESUME    0x7a  /* Resume program            0   0  0     */
 #define MX25L_ERS_RESUME    0x30  /* Resume erase              0   0  0     */
-#define MX25L_RDID          0x9f  /* Read identification       0   0  3     */
+#define MX25L_RDID          0x9e  /* Read identification       0   0  3     */
 #define MX25L_RES           0xab  /* Read electronic ID        0   3  1     */
 #define MX25L_REMS          0x90  /* Read manufacture and ID   1   2  >=2   */
 #define MX25L_ENSO          0xb1  /* Enter secured OTP         0   0  0     */
@@ -348,7 +349,7 @@ static inline int mx25l_readid(FAR struct mx25l_dev_s *priv)
   uint16_t capacity;
 
   mxlinfo("priv: %p\n", priv);
-
+ printf("here reached for spi comm-------------------------\n");
   /* Lock the SPI bus, configure the bus, and select this FLASH part. */
 
   mx25l_lock(priv->dev);
@@ -361,12 +362,23 @@ static inline int mx25l_readid(FAR struct mx25l_dev_s *priv)
   memory       = SPI_SEND(priv->dev, MX25L_DUMMY);
   capacity     = SPI_SEND(priv->dev, MX25L_DUMMY);
 
+// uint8_t data1[20];
+//   SPI_EXCHANGE(priv->dev, MX25L_RDID, data1, sizeof(data1));
+//   for(int j = 0; j<20 ; j++){
+//     printf("got data[%d]: %d \n",j,data1[j]);
+//   }
   /* Deselect the FLASH and unlock the bus */
 
   SPI_SELECT(priv->dev, SPIDEV_FLASH(0), false);
   mx25l_unlock(priv->dev);
-
+// uint8_t data1[20];
+//   SPI_EXCHANGE(priv->dev, M25P_RDID, data1, sizeof(data1));
+//   for(int j = 0; j<20 ; j++){
+//     printf("1. got data[%d]: %d \n",j,data1[j]);
+//   }
   mxlinfo("manufacturer: %02x memory: %02x capacity: %02x\n",
+          manufacturer, memory, capacity);
+  printf("manufacturer: %02x memory: %02x capacity: %02x\n",
           manufacturer, memory, capacity);
 
   /* Check for a valid manufacturer and memory type */
@@ -1153,7 +1165,7 @@ FAR struct mtd_dev_s *mx25l_initialize_spi(FAR struct spi_dev_s *dev)
   int ret;
 
   mxlinfo("dev: %p\n", dev);
-
+  printf("Insise mx 25lx.c====\n");
   /* Allocate a state structure (we allocate the structure instead of using
    * a fixed, static allocation so that we can handle multiple FLASH devices.
    * The current implementation would handle only one FLASH part per SPI

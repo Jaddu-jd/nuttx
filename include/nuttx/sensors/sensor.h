@@ -472,9 +472,9 @@ struct sensor_accel         /* Type: Accerometer */
 struct sensor_gyro          /* Type: Gyroscope */
 {
   uint64_t timestamp;       /* Units is microseconds */
-  float x;                  /* Axis X in rad/s */
-  float y;                  /* Axis Y in rad/s */
-  float z;                  /* Axis Z in rad/s */
+  double x;                  /* Axis X in rad/s */
+  double y;                  /* Axis Y in rad/s */
+  double z;                  /* Axis Z in rad/s */
   float temperature;        /* Temperature in degrees celsius */
 };
 

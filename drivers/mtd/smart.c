@@ -48,7 +48,7 @@
 #include <nuttx/mtd/mtd.h>
 #include <nuttx/mtd/smart.h>
 #include <nuttx/fs/smart.h>
-
+#include <stdio.h>
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/

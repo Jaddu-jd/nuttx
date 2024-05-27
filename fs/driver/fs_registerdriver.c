@@ -30,7 +30,7 @@
 #include <nuttx/fs/fs.h>
 
 #include "inode/inode.h"
-
+#include "stdio.h"
 /****************************************************************************
  * Public Functions
  ****************************************************************************/
@@ -62,6 +62,7 @@ int register_driver(FAR const char *path,
                     FAR const struct file_operations *fops,
                     mode_t mode, FAR void *priv)
 {
+  printf("reacjed registeer driver \n");
   FAR struct inode *node;
   int ret;
 

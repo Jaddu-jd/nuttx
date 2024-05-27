@@ -512,6 +512,20 @@ FAR struct mtd_dev_s *ramtron_initialize(FAR struct spi_dev_s *dev);
 
 FAR struct mtd_dev_s *mt25ql_initialize(FAR struct spi_dev_s *dev);
 
+
+
+/****************************************************************************
+ * Name: mx25l_initialize_spi
+ *
+ * Description:
+ *   Create an initialize MTD device instance. MTD devices are not registered
+ *   in the file system, but are created as instances that can be bound to
+ *   other functions (such as a block or character driver front end).
+ *
+ ****************************************************************************/
+
+FAR struct mtd_dev_s *mx25l_initialize_spi(FAR struct spi_dev_s *dev);
+
 /****************************************************************************
  * Name: sst25_initialize
  *

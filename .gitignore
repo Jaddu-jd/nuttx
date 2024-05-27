@@ -31,10 +31,7 @@
 *.pyc
 *~
 .depend
-/.config
-/.config.*
-/.config-*
-/.config\ *
+
 /.cproject
 /.gdbinit
 /.project
@@ -43,9 +40,8 @@
 /cscope.*
 /defconfig
 /Make.defs
-/nuttx
-/nuttx-*
-/nuttx.*
+
+
 /staging
 /tags
 /TAGS

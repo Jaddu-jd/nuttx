@@ -35,7 +35,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
-
+#include <stdio.h>
 #include <nuttx/mtd/mtd.h>
 #include <nuttx/kmalloc.h>
 #include <nuttx/fs/ioctl.h>
@@ -225,6 +225,7 @@ static int part_erase(FAR struct mtd_dev_s *dev, off_t startblock,
   if (!part_blockcheck(priv, (startblock + nblocks - 1) * priv->blkpererase))
     {
       ferr("ERROR: Erase beyond the end of the partition\n");
+      printf("ERROR: Erase beyond the end of the partition\n");
       return -ENXIO;
     }
 
@@ -842,12 +843,13 @@ FAR struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
   DEBUGASSERT(mtd);
 
   /* Allocate a partition device structure */
-
+ printf("Allocate a partition device structure\n");
   part = (FAR struct mtd_partition_s *)
          kmm_zalloc(sizeof(struct mtd_partition_s));
   if (!part)
     {
       ferr("ERROR: Failed to allocate memory for the partition device\n");
+      printf("ERROR: Failed to allocate memory for the partition device\n");
       return NULL;
     }
 
@@ -858,8 +860,12 @@ FAR struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
   if (ret < 0)
     {
       ferr("ERROR: mtd->ioctl failed: %d\n", ret);
+      printf("ERROR: mtd->ioctl failed: %d\n", ret);
       kmm_free(part);
       return NULL;
+    }
+    else{
+      printf("ret value is : %d------------------------------------------------------- \n", ret);
     }
 
   /* Get the number of blocks per erase.  There must be an even number of
@@ -882,15 +888,19 @@ FAR struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
   if (erasestart >= eraseend)
     {
       ferr("ERROR: sub-region too small\n");
+      printf("ERROR: sub-region too small\n");
       kmm_free(part);
       return NULL;
     }
+    printf("Erasestart %d eraseend %d\n",erasestart, eraseend);
+
 
   /* Verify that the sub-region is valid for this geometry */
 
   if (eraseend > part->geo.neraseblocks)
     {
       ferr("ERROR: sub-region too big\n");
+      printf("ERROR: sub-region too big\n");
       kmm_free(part);
       return NULL;
     }

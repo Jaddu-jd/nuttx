@@ -48,6 +48,7 @@
 #include <nuttx/fs/ioctl.h>
 #include <nuttx/mtd/mtd.h>
 #include <nuttx/mtd/configdata.h>
+#include <stdio.h>
 
 #ifdef CONFIG_MTD_CONFIG
 
@@ -1737,6 +1738,7 @@ static int mtdconfig_poll(FAR struct file *filep, FAR struct pollfd *fds,
 
 int mtdconfig_register(FAR struct mtd_dev_s *mtd)
 {
+  printf("reached mtdconfig_register to proces\n");
   int ret = -ENOMEM;
   struct mtdconfig_struct_s *dev;
   struct mtd_geometry_s geo;      /* Device geometry */
@@ -1780,7 +1782,9 @@ int mtdconfig_register(FAR struct mtd_dev_s *mtd)
         }
 
       nxmutex_init(&dev->lock);
-      register_driver("/dev/config", &g_mtdconfig_fops, 0666, dev);
+      int ret22 = register_driver("/dev/config", &g_mtdconfig_fops, 0666, dev);
+
+      printf("The value of ret 22 is %d\n",ret22);
     }
 
 errout:

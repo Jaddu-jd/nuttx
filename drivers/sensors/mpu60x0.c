@@ -27,7 +27,7 @@
  ****************************************************************************/
 
 #include <nuttx/config.h>
-
+#include<stdio.h>
 #include <errno.h>
 #include <debug.h>
 #include <string.h>
@@ -1133,6 +1133,7 @@ int mpu60x0_register(FAR const char *path, FAR struct mpu_config_s *config)
   FAR struct mpu_dev_s *priv;
   int ret;
 
+  printf("checkpoint 11 register");
   /* Without config info, we can't do anything. */
 
   if (config == NULL)
@@ -1152,6 +1153,7 @@ int mpu60x0_register(FAR const char *path, FAR struct mpu_config_s *config)
   memset(priv, 0, sizeof(*priv));
   nxmutex_init(&priv->lock);
 
+  printf("checkpoint 111 register");
   /* Keep a copy of the config structure, in case the caller discards
    * theirs.
    */
@@ -1171,8 +1173,8 @@ int mpu60x0_register(FAR const char *path, FAR struct mpu_config_s *config)
     }
 
   /* Register the device node. */
-
-  ret = register_driver(path, &g_mpu_fops, 0666, priv);
+  printf("checkpoint 1 register");
+  ret = register_driver(path, &g_mpu_fops, 0666, priv);//
   if (ret < 0)
     {
       snerr("ERROR: Failed to register mpu60x0 interface: %d\n", ret);

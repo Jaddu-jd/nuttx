@@ -140,7 +140,7 @@ CSRCS += at25.c
 endif
 
 ifeq ($(CONFIG_MTD_M25P),y)
-CSRCS += m25px.c
+CSRCS += m25px.c mtd_partition.c mtd_config.c smart.c
 endif
 
 ifeq ($(CONFIG_MTD_MX25L),y)
@@ -169,10 +169,6 @@ endif
 
 ifeq ($(CONFIG_MTD_IS25XP),y)
 CSRCS += is25xp.c
-endif
-
-ifeq ($(CONFIG_MTD_MT25QL), y)
-CSRCS += mt25ql.c
 endif
 
 ifeq ($(CONFIG_MTD_SMART),y)
