@@ -36,7 +36,7 @@
 
 #include <nuttx/arch.h>
 #include <nuttx/kmalloc.h>
-#include <nuttx/sensors/ioctl.h>
+#include <nuttx/analog/ioctl.h>
 #include <nuttx/analog/ads7953.h>
 #include <nuttx/mutex.h>
 
@@ -280,7 +280,7 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
   switch (cmd)
     {
       /* switch to manual select mode; arg: none*/
-      case SNIOC_ADC_MANUAL_SELECT:
+      case ANIOC_ADC_MANUAL_SELECT:
         {
           temp[0]  = MANUAL_MODE_1;
           temp[1] = MANUAL_MODE_2;
@@ -289,7 +289,7 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
         break;
 
       /* send the ADC2 auto select command; (refer to datasheet if confusion)*/
-      case SNIOC_ADC_AUTO_2_SELECT:
+      case ANIOC_ADC_AUTO_2_SELECT:
         {
           temp[0] = AUTO_2_MODE_1; 
           temp[1] = AUTO_2_MODE_2;
@@ -298,7 +298,7 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
         break;
       
       /* send the ADC2 auto program command */
-      case SNIOC_ADC_AUTO_2_PROGRAM:
+      case ANIOC_ADC_AUTO_2_PROGRAM:
         {
           temp[0]  = ADC_AUTO_2_PROGRAM2_1;
           temp[1] = ADC_AUTO_2_PROGRAM2_2;
@@ -308,7 +308,7 @@ static int ads7953_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
       /* send the ADC2 select read command (perform auto_2_select, auto_2_program and run this command to get the channel data;
       * keep calling this ioctl to get new channel data every time)  */
-      case SNIOC_ADC_AUTO_2_SELECT_READ:
+      case ANIOC_ADC_AUTO_2_SELECT_READ:
         {
           FAR uint8_t *ptr = (FAR uint8_t *)((uintptr_t)arg);
           DEBUGASSERT(ptr != NULL);

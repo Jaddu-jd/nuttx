@@ -109,6 +109,9 @@
 #define AN_SAMV7_AFEC_FIRST (AN_MCP48XX_FIRST + AN_MCP48XX_NCMDS)
 #define AN_SAMV7_AFEC_NCMDS 1
 
+/* See arch/arm/src/analog/ads7953.h */
+#define ANIOC_ADS7953_FIRST (AN_SAMV7_AFEC_FIRST + AN_SAMV7_AFEC_NCMDS)
+#define ANIOC_ADS7953_NCMDS 4
 
 
 /****************************************************************************

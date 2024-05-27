@@ -29,6 +29,7 @@
 #include <nuttx/spi/spi.h>
 #include <stdint.h>
 
+#include <nuttx/analog/ioctl.h>
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -60,6 +61,17 @@
 #define			ADC_AUTO_2_PROGRAM2_2		0xC0
 
 #define 		MAX_ADC_CHANNELS		12
+
+/* IOCTL Commands
+ * Cmd: ANIOC_ADC_MANUAL_SELECT           Arg: none
+ * Cmd: ANIOC_ADC_AUTO_2_SELECT           Arg: none
+ * Cmd: ANIOC_ADC_AUTO_2_PROGRAM          Arg: none
+ * Cmd: ANIOC_ADC_AUTO_2_SELECT_READ      Arg: uint8_t *  -- pointer to data read from ADC 
+ */
+#define ANIOC_ADC_MANUAL_SELECT           _ANIOC(ANIOC_ADS7953_FIRST + 0)
+#define ANIOC_ADC_AUTO_2_SELECT           _ANIOC(ANIOC_ADS7953_FIRST + 1)
+#define ANIOC_ADC_AUTO_2_PROGRAM          _ANIOC(ANIOC_ADS7953_FIRST + 2)
+#define ANIOC_ADC_AUTO_2_SELECT_READ      _ANIOC(ANIOC_ADS7953_FIRST + 3)
 
 /****************************************************************************
  * Public Types
