@@ -62,3 +62,4 @@ tools/gdb/__pycache__
 .ccls-cache
 compile_commands.json
 boards/arm/stm32/stm32f427a-minimal/scripts/ld.script.tmp
+*.vscode-ctags
