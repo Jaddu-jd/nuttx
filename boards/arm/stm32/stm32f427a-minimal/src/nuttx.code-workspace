@@ -12,7 +12,8 @@
 			"ads7953.h": "c",
 			"mtd.h": "c",
 			"stm32f427ax_gpio.h": "c",
-			"stm32f40xxx_gpio.h": "c"
+			"stm32f40xxx_gpio.h": "c",
+			"smartfs.h": "c"
 		}
 	}
 }

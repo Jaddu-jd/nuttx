@@ -339,7 +339,6 @@ struct smartfs_mountpt_s
 /* Forward references for utility functions */
 
 struct smartfs_mountpt_s;
-
 /* Utility functions */
 
 int smartfs_mount(FAR struct smartfs_mountpt_s *fs, bool writeable);

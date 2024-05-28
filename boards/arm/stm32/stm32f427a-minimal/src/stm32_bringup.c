@@ -194,30 +194,12 @@ int stm32_bringup(void)
     }
 #endif
 
-#ifdef CONFIG_SENSORS_L3GD20
-  ret = board_l3gd20_initialize(0, 5);
-  if (ret != OK)
-    {
-      syslog(LOG_ERR, "ERROR: Failed to initialize l3gd20 sensor:"
-             " %d\n", ret);
-    }
-#endif
-
-#ifdef CONFIG_PWM
-  /* Initialize PWM and register the PWM device. */
-
-  ret = stm32_pwm_setup();
-  if (ret < 0)
-    {
-      syslog(LOG_ERR, "ERROR: stm32_pwm_setup() failed: %d\n", ret);
-    }
-#endif
-
 #if defined(CONFIG_MTD) || defined(CONFIG_MTD_M25P)
   struct mtd_dev_s *mtd;
   #if defined(CONFIG_MTD_MX25L)
 struct mtd_dev_s *mtd4;
   #endif
+
 #if defined (CONFIG_MTD_MT25QL) || defined(CONFIG_MTD_M25P)
   struct mtd_geometry_s geo;
 #endif  // CONFIG_MTD_MT25QL
@@ -353,7 +335,6 @@ static struct mag_priv_s mag0 =
 
 #if defined(CONFIG_MTD) && defined(CONFIG_MTD_M25P) || defined(CONFIG_MTD_MT25QL)
   syslog(LOG_INFO, "Bind SPI to the SPI flash driver\n");
-  printf("Reached ckpt 1 bringup mtd\n");
   #if defined(CONFIG_MTD_MT25QL)
   mtd = mt25ql_initialize(spi3);
   #endif
@@ -370,6 +351,9 @@ static struct mag_priv_s mag0 =
   if (ret < 0)
     {
       syslog(LOG_ERR, "ERROR: register_mtddriver() failed: %d\n", ret);
+    }
+    else{
+      printf("mtd driver registered successfully ... \r\n");
     }
     
   #endif
@@ -392,7 +376,6 @@ static struct mag_priv_s mag0 =
         {
           printf("ERROR: mtd->ioctl failed: %d\n", ret);
         }
-        printf("The value of ret is %d \n",ret);
 
 #ifdef CONFIG_STM32F427A_FLASH_PART
         {
@@ -526,27 +509,6 @@ static struct mag_priv_s mag0 =
 
 #endif /* CONFIG_MTD */
 #endif /* CONFIG_STM32_SPI3 */
-
-// #if defined(CONFIG_RAMMTD) && defined(CONFIG_STM32F427A_RAMMTD)
-//   /* Create a RAM MTD device if configured */
-
-//     {
-//       uint8_t *start =
-//           kmm_malloc(CONFIG_STM32F427A_RAMMTD_SIZE * 1024);
-//       mtd = rammtd_initialize(start,
-//                               CONFIG_STM32F427A_RAMMTD_SIZE * 1024);
-//       mtd->ioctl(mtd, MTDIOC_BULKERASE, 0);
-
-//       /* Now initialize a SMART Flash block device and bind it to the MTD
-//        * device
-//        */
-
-// #if defined(CONFIG_MTD_SMART) && defined(CONFIG_FS_SMARTFS)
-//       smart_initialize(CONFIG_STM32F427A_RAMMTD_MINOR, mtd, NULL);
-// #endif
-//     }
-
-// #endif /* CONFIG_RAMMTD && CONFIG_STM32F427A_RAMMTD */
 
 #ifdef CONFIG_ADC
   /* Initialize ADC and register the ADC device. */
