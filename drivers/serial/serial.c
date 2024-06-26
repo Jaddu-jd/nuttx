@@ -52,6 +52,7 @@
 #include <nuttx/power/pm.h>
 #include <nuttx/wqueue.h>
 #include <nuttx/kthread.h>
+#include <stdio.h>
 
 /****************************************************************************
  * Pre-processor Definitions
