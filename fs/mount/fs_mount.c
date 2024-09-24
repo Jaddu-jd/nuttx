@@ -30,7 +30,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <debug.h>
-
+// #include <syslog.h>
 #include <nuttx/fs/fs.h>
 
 #include "inode/inode.h"
@@ -305,6 +305,7 @@ int nx_mount(FAR const char *source, FAR const char *target,
         {
           ferr("ERROR: Failed to find block based file system %s\n",
                filesystemtype);
+               syslog(LOG_SYSLOG,"ERROR: Failed to find block based file system %s\n", filesystemtype);
 
           ret = -ENODEV;
           goto errout_with_inode;
@@ -322,7 +323,8 @@ int nx_mount(FAR const char *source, FAR const char *target,
         {
           ferr("ERROR: Failed to find MTD based file system %s\n",
                filesystemtype);
-
+           syslog(LOG_SYSLOG,"ERROR: Failed to find MTD based file system %s\n",
+               filesystemtype);
           ret = -ENODEV;
           goto errout_with_inode;
         }
@@ -332,12 +334,13 @@ int nx_mount(FAR const char *source, FAR const char *target,
   if ((mops = mount_findfs(g_nonbdfsmap, filesystemtype)) != NULL)
     {
       finfo("found %s\n", filesystemtype);
+       syslog(LOG_SYSLOG,"ERROR: target %s exists and is a special node\n", target);
     }
   else
 #endif /* NODFS_SUPPORT */
     {
       ferr("ERROR: Failed to find block driver %s\n", source);
-
+ syslog(LOG_SYSLOG, "ERROR: target %s exists and is a special node\n", target);
       ret = -ENOTBLK;
       goto errout;
     }
@@ -370,6 +373,7 @@ int nx_mount(FAR const char *source, FAR const char *target,
       if (!INODE_IS_PSEUDODIR(mountpt_inode))
         {
           ferr("ERROR: target %s exists and is a special node\n", target);
+           syslog(LOG_SYSLOG,"ERROR: target %s exists and is a special node\n", target);
           ret = -ENOTDIR;
           inode_release(mountpt_inode);
           goto errout_with_lock;

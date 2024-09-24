@@ -41,7 +41,11 @@
  * Pre-processor Definitions
  ****************************************************************************/
 
-#define D_I_BUS_OFFSET  0x70000
+#ifndef CONFIG_ESP32S2_RTC_HEAP
+#error "No suitable heap available. Enable ESP32S2_RTC_HEAP."
+#endif
+
+#define D_I_BUS_OFFSET  0x700000
 
 /****************************************************************************
  * Public Functions

@@ -150,7 +150,7 @@ The following list indicates the state of peripherals' support in NuttX:
 ========== ======= =====
 Peripheral Support NOTES
 ========== ======= =====
-ADC          YES
+ADC          No
 AES          YES
 Bluetooth    No
 CAMERA       No

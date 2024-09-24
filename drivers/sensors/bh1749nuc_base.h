@@ -41,6 +41,8 @@
  * Pre-processor Definitions
  ****************************************************************************/
 
+#define BH1749NUC_I2C_FREQ          400000
+
 #define BH1749NUC_MANUFACTID        0xE0    /* Manufact ID */
 #define BH1749NUC_PARTID            0x0D    /* Part ID */
 

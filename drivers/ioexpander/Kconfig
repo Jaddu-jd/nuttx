@@ -66,18 +66,11 @@ config IOEXPANDER_ICJX
 
 if IOEXPANDER_ICJX
 
-config ICJX_MULTIPLE
+config iC-JX_MULTIPLE
 	bool "Multiple iC-JX Devices"
 	default n
 	---help---
 		Can be defined to support multiple iC-JX devices on board.
-
-config ICJX_INT_ENABLE
-	bool "Enable iC-JX Interrupt Support"
-	default n
-	select IOEXPANDER_INT_ENABLE
-	---help---
-		Enable driver interrupt functionality
 
 endif # IOEXPANDER_ICJX
 

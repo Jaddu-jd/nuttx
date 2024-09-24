@@ -221,9 +221,10 @@ static int bh1749nuc_fetch(FAR struct sensor_lowerhalf_s *lower,
       goto errout;
     }
 
-  /* Get data without wait for VALID flag - otherwise the sensor freezes
-   * when we read RBG and IR data one after another
-   */
+  /* Wait for data */
+
+  while (!(bh1749nuc_getreg8(dev, BH1749NUC_MODE_CONTROL2) &
+           BH1749NUC_MODE_CONTROL2_VALID));
 
   if (lower->type == SENSOR_TYPE_RGB)
     {
@@ -450,7 +451,7 @@ int bh1749nuc_register_uorb(int devno, FAR struct bh1749nuc_config_s *config)
 
   dev->dev.i2c  = config->i2c;
   dev->dev.addr = config->addr;
-  dev->dev.freq = CONFIG_BH1749NUC_I2C_FREQUENCY;
+  dev->dev.freq = BH1749NUC_I2C_FREQ;
 
   /* Check Device ID */
 
@@ -503,11 +504,6 @@ int bh1749nuc_register_uorb(int devno, FAR struct bh1749nuc_config_s *config)
     {
       goto ir_err;
     }
-
-  /* SW Reset */
-
-  bh1749nuc_putreg8(&dev->dev, BH1749NUC_SYSTEM_CONTROL,
-                    BH1749NUC_SYSTEM_CONTROL_SW_RESET);
 
 #ifdef CONFIG_SENSORS_BH1749NUC_POLL
   /* Create thread for polling sensor data */

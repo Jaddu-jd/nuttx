@@ -29,8 +29,6 @@
 
 #include <nuttx/fs/fs.h>
 
-#include "imx9_dma_alloc.h"
-
 #include "imx93-evk.h"
 
 /****************************************************************************
@@ -56,16 +54,6 @@ int imx9_bringup(void)
   if (ret < 0)
     {
       syslog(LOG_ERR, "ERROR: Failed to mount procfs at /proc: %d\n", ret);
-    }
-#endif
-
-#ifdef CONFIG_IMX9_DMA_ALLOC
-  /* Initialize the DMA memory allocator */
-
-  ret = imx9_dma_alloc_init();
-  if (ret < 0)
-    {
-      syslog(LOG_ERR, "ERROR: Failed initialize DMA allocator: %d\n", ret);
     }
 #endif
 
@@ -96,15 +84,6 @@ int imx9_bringup(void)
   if (ret < 0)
     {
       syslog(LOG_ERR, "Failed to initialize SPI driver: %d\n", ret);
-    }
-#endif
-
-#ifdef CONFIG_MMCSD
-  ret = imx9_usdhc_init();
-
-  if (ret < 0)
-    {
-      syslog(LOG_ERR, "Failed to init MMCSD driver: %d\n", ret);
     }
 #endif
 

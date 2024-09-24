@@ -46,9 +46,12 @@ bl602_start:
 
     la gp, __global_pointer$
 .option pop
-    la sp, _ebss
+    la sp, g_idle_stack
+    add s11, sp, zero
+
     li t0, SMP_STACK_SIZE
     add sp, sp, t0
+    andi sp, sp, ~0xF
 
 #ifndef RUN_IN_RAM
 
@@ -103,8 +106,8 @@ bl602_entry_load_data_section_end:
 
     /* Clear bss section */
 
-    la a0, _sbss
-    la a1, _ebss
+    la a0, __bss_start
+    la a1, __bss_end
     bgeu a0, a1, bl602_entry_zero_bss_end
 
 bl602_entry_zero_bss_loop:

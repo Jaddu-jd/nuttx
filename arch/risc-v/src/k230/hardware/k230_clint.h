@@ -44,6 +44,4 @@
 #  define K230_TIMECMP       K230_CLINT_MTIMECMP
 #endif
 
-#define RISCV_IPI            K230_IPI
-
 #endif /* __ARCH_RISCV_SRC_K230_HARDWARE_K230_CLINT_H */

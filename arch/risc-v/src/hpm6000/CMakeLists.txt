@@ -1,5 +1,5 @@
 # ##############################################################################
-# arch/risc-v/src/hpm6000/CMakeLists.txt
+# arch/arm/src/qemu-rv/CMakeLists.txt
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor
 # license agreements.  See the NOTICE file distributed with this work for

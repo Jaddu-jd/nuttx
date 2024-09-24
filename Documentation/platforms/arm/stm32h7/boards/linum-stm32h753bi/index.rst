@@ -593,7 +593,7 @@ This example use the flash memory W25Q128JV via qspi with the littlefs file syst
 
 rndis
 -----
-This example use ethernet over usb and show how configure ip and download file with wget command from server.
+This exemple use ethernet over usb and show how configure ip and download file with wget command from server.
 
 After flash the board check if the linux found and recognized the new network driver:: 
 
@@ -618,7 +618,7 @@ After flash the board check if the linux found and recognized the new network dr
     TX packets 99  bytes 22896 (22.8 KB)
     TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-**OBS:** In network settings of PC enable "Shared to other computers"
+obs: In network settings of PC enable "Shared to other computers"
 
 Configure the IP of target::
 
@@ -691,67 +691,3 @@ Testing wget to download file from server::
     nsh> ls
     /tmp:
     nuttx_logo.txt
-
-usbmsc-sdcard
--------------
-This example uses the USB Mass Storage with SD Card.
-
-Enable the USB Mass Storage with the command **msconn**::
-
-    nsh> msconn
-    mcsonn_main: Creating block drivers
-    mcsonn_main: handle=0x38003020
-    mcsonn_main: Bind LUN=0 to /dev/mmcsd0
-    mcsonn_main: Connected
-
-After that check if your PC recognized the usb driver::
-
-    $ sudo dmesg | tail
-    [sudo] password for jaga: 
-    [27219.361934] usbcore: registered new interface driver uas
-    [27220.378231] scsi 0:0:0:0: Direct-Access     NuttX    Mass Storage     0101 PQ: 0 ANSI: 2
-    [27220.378646] sd 0:0:0:0: Attached scsi generic sg0 type 0
-    [27220.379203] sd 0:0:0:0: [sda] 1930240 512-byte logical blocks: (988 MB/943 MiB)
-    [27220.597414] sd 0:0:0:0: [sda] Write Protect is off
-    [27220.597419] sd 0:0:0:0: [sda] Mode Sense: 0f 00 00 00
-    [27220.817620] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
-    [27221.265245]  sda: sda1
-    [27221.266103] sd 0:0:0:0: [sda] Attached SCSI removable disk
-    [27228.147377] FAT-fs (sda1): Volume was not properly unmounted. Some data may be corrupt. Please run fsck.
-
-**OBS:** This example disable the macro CONFIG_STM32H7_SDMMC_IDMA, for more information read the file: arch/arm/stm32h7/stm32_sdmmc.c
-
-netnsh
-------
-
-This configuration is focused on network testing using the ethernet periferal::
-
-    $ nsh> ifconfig
-      eth0	Link encap:Ethernet HWaddr 00:e0:de:ad:be:ef at UP mtu 1486
-        inet addr:192.168.1.6 DRaddr:192.168.1.1 Mask:255.255.255.0
-
-                  IPv4   TCP   UDP  ICMP
-      Received     01b9  0025  0194  0000
-      Dropped      0000  0000  0000  0000
-        IPv4        VHL: 0000   Frg: 0000
-        Checksum   0000  0000  0000  ----
-        TCP         ACK: 0000   SYN: 0000
-                    RST: 0000  0000
-        Type       0000  ----  ----  0000
-      Sent         0028  0025  0003  0000
-        Rexmit     ----  0000  ----  ----
-
-      nsh> ping google.com
-      PING 142.251.129.110 56 bytes of data
-      56 bytes from 142.251.129.110: icmp_seq=0 time=10.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=1 time=0.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=2 time=0.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=3 time=0.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=4 time=0.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=5 time=0.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=6 time=0.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=7 time=0.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=8 time=0.0 ms
-      56 bytes from 142.251.129.110: icmp_seq=9 time=0.0 ms
-      10 packets transmitted, 10 received, 0% packet loss, time 10100 ms
-      rtt min/avg/max/mdev = 0.000/1.000/10.000/3.000 ms

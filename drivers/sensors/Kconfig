@@ -143,10 +143,6 @@ config SENSORS_BH1749NUC
 
 if SENSORS_BH1749NUC
 
-config BH1749NUC_I2C_FREQUENCY
-	int "BH1749NUC I2C frequency"
-	default 400000
-
 config SENSORS_BH1749NUC_UORB
 	bool "BH1749NUC UORB Interface"
 	default n
@@ -326,10 +322,6 @@ config SENSORS_BMM150
 
 if SENSORS_BMM150
 
-config BMM150_I2C_FREQUENCY
-	int "BMM150 I2C frequency"
-	default 400000
-
 config SENSORS_BMM150_POLL
 	bool "Enables polling sensor data"
 	default n
@@ -486,22 +478,6 @@ config SENSORS_HCSR04
 	---help---
 		Enable driver support for the HC-SR04 Distance Sensor.
 
-if SENSORS_HCSR04
-
-config HCSR04_DEBUG
-	bool "Debug support for the HC-SR04"
-	default n
-	---help---
-		Enables debug features for the HC-SR04
-
-config HCSR04_NPOLLWAITERS
-	int "Number of waiters to poll"
-	default 1
-	---help---
-		Number of waiters to poll
-
-endif # SENSORS_HCSR04
-
 config SENSORS_HYT271
 	bool "IST HYT271 Humidity and Temperature Sensor support"
 	default n
@@ -529,6 +505,22 @@ config SENSORS_HYT271_THREAD_STACKSIZE
 	default 1024
 	---help---
 		The stack size for the worker thread.
+
+if SENSORS_HCSR04
+
+config HCSR04_DEBUG
+	bool "Debug support for the HC-SR04"
+	default n
+	---help---
+		Enables debug features for the HC-SR04
+
+config HCSR04_NPOLLWAITERS
+	int "Number of waiters to poll"
+	default 1
+	---help---
+		Number of waiters to poll
+
+endif # SENSORS_HCSR04
 
 config SENSORS_ISL29023
 	bool "Renesas ISL29023 ALS sensor"
@@ -1314,6 +1306,43 @@ config SENSORS_LIS3MDL
 	select SPI
 	---help---
 		Enable driver support for the STMicro LIS3MDL 3-axis magnetometer.
+
+if SENSORS_LIS3MDL
+
+config SENSORS_LIS3MDL_SPI_PORT
+  int "Define the SPI port for LIS3MDL magnetometer sensor"
+  default 5
+  ---help---
+    Enable the uORB operation of the sensor
+
+config SENSORS_LIS3MDL_ORB
+  bool "use the sensor in uORB mode data transmission"
+  default n
+  select SPI
+  ---help---
+    Enable the uORB operation of the sensor
+
+config SENSORS_LIS3MDL_ORB_BUFFER_SIZE
+  int "size of the lis3mdl buffer size for data"
+  default 1
+  ---help---
+    The size of the circular buffer used. If the value equal to zero,
+    indicates that the circular buffer is disabled.
+
+config SENSORS_LIS3MDL_THREAD_STACKSIZE
+		int "worker thread stack size"
+		default 1024
+		---help----
+			The size of worker thread.
+
+config SENSORS_LIS3MDL_POLL_INTERVAL
+	int "Polling interval in microseconds, default 3 sec"
+	default 3000000
+	range 0 4294967295
+	---help---
+		The interval until a new sensor measurement will be triggered.
+
+endif #SENSORS_LIS3MDL
 
 config LM75_I2C
 	bool

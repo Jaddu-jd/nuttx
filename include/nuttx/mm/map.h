@@ -200,10 +200,7 @@ void vm_release_region(FAR struct mm_map_s *mm, FAR void *vaddr,
  *
  * Description:
  *   Allocate virtual memory and maps given physical memory into user space
- *   of the current process. The mapped region can be larger than requested
- *   if given paddr isn't page-aligned, use with care so that not to create
- *   unwanted security holes. The returned virtual address has same in-page
- *   alignment as given paddr.
+ *   of the current process.
  *
  * Input Parameters:
  *   paddr - Starting physical address

@@ -159,11 +159,9 @@ int mpfs_mpu_set(uintptr_t reg, uintptr_t perm, uintptr_t base,
       return -EACCES;
     }
 
-  /* Base must be word aligned,
-   * minimum size is 4K and it has to be power-of-two
-   */
+  /* Base must be word aligned, minimum size is 4K */
 
-  if ((base & 0x07) != 0 || size < 0x1000 || (size & (size - 1)) != 0)
+  if ((base & 0x07) != 0 || size < 0x1000)
     {
       return -EINVAL;
     }

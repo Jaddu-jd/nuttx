@@ -69,7 +69,6 @@
  */
 
 #define NETPKT_BUFLEN   CONFIG_IOB_BUFSIZE
-#define NETPKT_BUFNUM   CONFIG_IOB_NBUFFERS
 
 /****************************************************************************
  * Public Types

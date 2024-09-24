@@ -109,10 +109,6 @@
 #  include "esp32s3_aes.h"
 #endif
 
-#ifdef CONFIG_ESP32S3_ADC
-#include "esp32s3_board_adc.h"
-#endif
-
 #include "esp32s3-devkit.h"
 
 /****************************************************************************
@@ -458,16 +454,6 @@ int esp32s3_bringup(void)
       esp32s3_aes_test();
     }
 #endif
-#endif
-
-#ifdef CONFIG_ESP32S3_ADC
-  /* Configure ADC */
-
-  ret = board_adc_init();
-  if (ret)
-    {
-      syslog(LOG_ERR, "ERROR: board_adc_init() failed: %d\n", ret);
-    }
 #endif
 
   /* If we got here then perhaps not all initialization was successful, but

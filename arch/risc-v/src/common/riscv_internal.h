@@ -168,40 +168,6 @@
 
 #endif
 
-/* SBI Extension IDs */
-
-#define SBI_EXT_HSM             0x48534D
-#define SBI_EXT_IPI             0x735049
-#define SBI_EXT_TIME            0x54494D45
-#define SBI_EXT_SRST            0x53525354
-
-/* SBI function IDs for TIME extension */
-
-#define SBI_EXT_TIME_SET_TIMER  0x0
-
-/* SBI function IDs for HSM extension */
-
-#define SBI_EXT_HSM_HART_START  0x0
-
-/* SBI function IDs for IPI extension */
-
-#define SBI_EXT_IPI_SEND_IPI  0x0
-
-/* SBI function IDs for SRST extension */
-
-#define SBI_EXT_SRST_SYS_RESET 0x0
-
-/* SBI system reset type */
-
-#define SBI_SRST_TYPE_SHUTDOWN    0
-#define SBI_SRST_TYPE_REBOOT_COLD 1
-#define SBI_SRST_TYPE_REBOOT_WARM 1
-
-/* SBI system reset reason */
-
-#define SBI_SRST_REASON_NONE      0
-#define SBI_SRST_REASON_FAILURE   1
-
 /****************************************************************************
  * Public Types
  ****************************************************************************/
@@ -331,15 +297,25 @@ int riscv_check_pmp_access(uintptr_t attr, uintptr_t base, uintptr_t size);
 int riscv_configured_pmp_regions(void);
 int riscv_next_free_pmp_region(void);
 
+/* RISC-V Memorymap Config **************************************************/
+
+static inline void riscv_set_basestack(uintptr_t base, uintptr_t size)
+{
+  unsigned int i;
+
+  for (i = 0; i < CONFIG_SMP_NCPUS; i++)
+    {
+      g_cpux_idlestack[i] = (const uint8_t *)(base + size * i);
+    }
+}
+
 /* RISC-V SBI wrappers ******************************************************/
 
 #ifdef CONFIG_ARCH_USE_S_MODE
-uintptr_t riscv_sbi_send_ipi(uint32_t hmask, uintptr_t hbase);
 void riscv_sbi_set_timer(uint64_t stime_value);
 uint64_t riscv_sbi_get_time(void);
 uintptr_t riscv_sbi_boot_secondary(uint32_t hartid, uintptr_t addr,
                                    uintptr_t a1);
-uintptr_t riscv_sbi_system_reset(uint32_t type, uint32_t reason);
 #endif
 
 /* Power management *********************************************************/

@@ -85,6 +85,31 @@ SECTIONS
     . = ORIGIN(KDRAM) + _iram_end - _iram_start;
   } >KDRAM
 
+  /* Shared RAM */
+
+  .dram0.bss (NOLOAD) :
+  {
+    . = ALIGN (8);
+    _sbss = ABSOLUTE(.);
+    *(.dynsbss)
+    *(.sbss)
+    *(.sbss.*)
+    *(.gnu.linkonce.sb.*)
+    *(.scommon)
+    *(.sbss2)
+    *(.sbss2.*)
+    *(.gnu.linkonce.sb2.*)
+    *(.dynbss)
+    *(.bss)
+    *(.bss.*)
+    *(.share.mem)
+    *(.gnu.linkonce.b.*)
+    *(COMMON)
+
+    . = ALIGN (8);
+    _ebss = ABSOLUTE(.);
+  } >KDRAM
+
   .noinit (NOLOAD):
   {
     /* This section contains data that is not initialized during load,
@@ -114,31 +139,10 @@ SECTIONS
     *(.dram1.*)
     . = ALIGN(4);
     _edata = ABSOLUTE(.);
-  } >KDRAM
 
-  /* Shared RAM */
+    /* Heap starts at the end of .data */
 
-  .dram0.bss (NOLOAD) :
-  {
-    . = ALIGN (8);
-    _sbss = ABSOLUTE(.);
-    *(.dynsbss)
-    *(.sbss)
-    *(.sbss.*)
-    *(.gnu.linkonce.sb.*)
-    *(.scommon)
-    *(.sbss2)
-    *(.sbss2.*)
-    *(.gnu.linkonce.sb2.*)
-    *(.dynbss)
-    *(.bss)
-    *(.bss.*)
-    *(.share.mem)
-    *(.gnu.linkonce.b.*)
-    *(COMMON)
-
-    . = ALIGN (32);
-    _ebss = ABSOLUTE(.);
+    _sheap = ABSOLUTE(.);
   } >KDRAM
 
   .flash.text :

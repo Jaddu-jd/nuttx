@@ -1,0 +1,223 @@
+[33mcommit 989c2c12530523744cffc565ad456af186c044dd[m[33m ([m[1;36mHEAD -> [m[1;32mcubus-v1[m[33m, [m[1;31morigin/cubus-v1[m[33m)[m
+Author: Jaddu <73777131+Jaddu-jd@users.noreply.github.com>
+Date:   Mon Aug 12 11:57:15 2024 +0000
+
+    ADC ads7953.c added
+
+[33mcommit 40b5c3b30fc7558a0d5e4487a91ed5d5630659af[m
+Author: Jaddu <73777131+Jaddu-jd@users.noreply.github.com>
+Date:   Fri Jun 14 13:34:52 2024 +0000
+
+    Added uorb library for lis3mdl
+
+[33mcommit 782a555d420e86c8a7559a30b97afe21daed2e09[m
+Author: Janardhan <73777131+Jaddu-jd@users.noreply.github.com>
+Date:   Thu May 23 17:12:03 2024 +0545
+
+    Addition of ADC
+    
+    ADC driver for external ADC added.
+
+[33mcommit 572e6a2f4abdff478fba924a913eec2e465e8231[m[33m ([m[1;31morigin/apn_bus[m[33m)[m
+Author: Janardhan <73777131+Jaddu-jd@users.noreply.github.com>
+Date:   Thu May 16 16:52:49 2024 +0545
+
+    removed the debug messages
+
+[33mcommit cacc4f52b185543f68c27cc6aab596ca50bc4e70[m
+Author: Janardhan <73777131+Jaddu-jd@users.noreply.github.com>
+Date:   Wed May 15 10:35:50 2024 +0545
+
+    Board setup for Lis3MDl operation
+
+[33mcommit fb73bce9bc468ca71d35929fd07e89ead3a20127[m
+Author: Janardhan <73777131+Jaddu-jd@users.noreply.github.com>
+Date:   Sun May 12 17:00:51 2024 +0545
+
+    Updated STM32F427A chip defs files | Added MT25QL driver
+    
+    Update the definitions files for STM32F27A chip,
+    
+    Added MT25QL flash driver and entered to MTD list
+
+[33mcommit d58fd9ffc964d67602a6f1be8841dafc00f1eda1[m
+Author: Janardhan <73777131+Jaddu-jd@users.noreply.github.com>
+Date:   Fri May 3 18:10:42 2024 +0545
+
+    Added Board and Chip support for STM32F427(V/A) respectively
+    
+    Minimal board configs added for STM32F427V based board. USB Build error exists
+    Chip support configured for STM32F427A chip. Minimal board config also setup for board based on the same chip.
+
+[33mcommit 8821a0396adcc98db4ed083af555a2ab0b53717c[m
+Author: chao an <anchao@lixiang.com>
+Date:   Tue Apr 30 08:57:14 2024 +0800
+
+    arch/risc-v: correct minor issues regarding comments
+    
+    The comment in riscv_vpu.S should be vector not floating
+    
+    Signed-off-by: chao an <anchao@lixiang.com>
+
+[33mcommit e4d4c67b78fd49e118408a83ab63b5e9302749a6[m
+Author: chao an <anchao@lixiang.com>
+Date:   Tue Apr 30 09:31:56 2024 +0800
+
+    serial/pl011: configurable clock frequency
+    
+    move clock frequency into Kconfig
+    
+    Signed-off-by: chao an <anchao@lixiang.com>
+
+[33mcommit 2295fa818dd077a1e383b6a2360311d1d6e30acb[m
+Author: YAMAMOTO Takashi <yamamoto@midokura.com>
+Date:   Tue Apr 30 14:48:41 2024 +0900
+
+    esp32s3: give ESP32S3_APP_FORMAT_LEGACY a prompt
+    
+    So that users can enable it.
+    This fixes a regression in "esp32s3: add simple boot support".
+
+[33mcommit 891d67bb5e5b100d625d1a9503a12360482424c8[m
+Author: Eren Terzioglu <eren.terzioglu@espressif.com>
+Date:   Tue Apr 2 18:49:57 2024 +0300
+
+    esp32[c3|h2|c6]: Add support to TWAI/CANBus controller
+
+[33mcommit 7e30d3855871812d5985a17a96c0bc7264a4df5a[m
+Author: simbit18 <101105604+simbit18@users.noreply.github.com>
+Date:   Mon Apr 29 16:01:56 2024 +0200
+
+    drivers/sensors/Kconfig: Added if SENSORS_BME680 for common dependency
+    
+    sensor BME680: Added if SENSORS_BME680
+
+[33mcommit 0db7417dc0d066218ac71fe8521a3d61327d0763[m
+Author: Xu Xingliang <xuxingliang@xiaomi.com>
+Date:   Mon Apr 29 19:35:32 2024 +0800
+
+    esp32/lvgl: fix lvgl v9 configuration error
+    
+    Signed-off-by: Xu Xingliang <xuxingliang@xiaomi.com>
+
+[33mcommit 6ad202ee4c0783d2f3d221ecd9024dc3dd3a7fcf[m
+Author: Rodrigo Sim <rcsim10@gmail.com>
+Date:   Sat Apr 20 11:05:39 2024 -0300
+
+    board/stm32f401rc-rs485: Add support to Mass Storage
+    
+    Signed-off-by: Rodrigo Sim rcsim10@gmail.com
+
+[33mcommit 94d8fba6298027980cb845201d3a5f730a9f5236[m
+Author: xuxin19 <xuxin19@xiaomi.com>
+Date:   Mon Apr 29 19:18:02 2024 +0800
+
+    cmake:bugfix generate config.h contain ; characters will be handled incorrectly
+    
+    `;` is treated as a list separator in CMake.
+    the file(STRING) function will read the wrong .config value
+    string(REGEX REPLACE) will also incorrectly handle lines containing `;`
+    so here we can only parse character by character.
+    
+    Signed-off-by: xuxin19 <xuxin19@xiaomi.com>
+
+[33mcommit 8f23a2db0147e1171d62df12540cad86fc12c82c[m
+Author: Michal Lenc <michallenc@seznam.cz>
+Date:   Mon Apr 29 09:59:14 2024 +0200
+
+    samv7: build sam_qencoder.c only if at least one timer counter is enabled
+    
+    Option CONFIG_SENSORS_QENCODER might be configured even if SAMv7 qencoder
+    over timer counter is not used (for example encoder over GPIO is selected
+    with CONFIG_SAMV7_GPIO_ENC). This can cause compile warnings, also build
+    of sam_qencoder.c file is unnecessary in that case.
+    
+    New hidden option CONFIG_SAMV7_QENCODER is added and automatically
+    selected if at least one timer counter is enabled for qencoder. Build
+    is triggered on this option.
+    
+    Signed-off-by: Michal Lenc <michallenc@seznam.cz>
+
+[33mcommit 45568229ef80534ae3f0fc4473884b7cf6c069c3[m
+Author: zhanghongyu <zhanghongyu@xiaomi.com>
+Date:   Mon Apr 29 15:10:08 2024 +0800
+
+    tcp: decouple TCP_NODELAY and NET_TCP_KEEPALIVE
+    
+    TCP_NODELAY is an independent configuration and does not depend on TCP_KEEPALIVE
+    
+    Signed-off-by: zhanghongyu <zhanghongyu@xiaomi.com>
+
+[33mcommit 0cd893fb5a47a1914063bf78310af2f882c9644a[m
+Author: zhanghongyu <zhanghongyu@xiaomi.com>
+Date:   Tue Feb 6 10:27:56 2024 +0800
+
+    icmpv6_neighbor: Simply skip IPv6 conflict detection on L3 Nic
+    
+    Otherwise, the IP address is always considered to conflict, and the ipv6
+    address cannot be effectively obtained.
+    Later we will look at how to perform conflict detection on L3 network cards
+    
+    Signed-off-by: zhanghongyu <zhanghongyu@xiaomi.com>
+
+[33mcommit f739fd010de8cd5114cafa730a0cb0fc130bd699[m
+Author: zhanghongyu <zhanghongyu@xiaomi.com>
+Date:   Wed Jan 24 15:00:38 2024 +0800
+
+    icmpv6_neighbor: skip neighbor solicitation on L3 Nic
+    
+    Otherwise, sending will fail because the neighbor table cannot be found
+    
+    Signed-off-by: zhanghongyu <zhanghongyu@xiaomi.com>
+
+[33mcommit 22ffa8ebf11cabe32e67de0fc5900fa95ccd4b3c[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Mon Apr 29 02:11:23 2024 +0000
+
+    build(deps): bump github/super-linter from 5 to 6
+    
+    Bumps [github/super-linter](https://github.com/github/super-linter) from 5 to 6.
+    - [Release notes](https://github.com/github/super-linter/releases)
+    - [Changelog](https://github.com/github/super-linter/blob/main/CHANGELOG.md)
+    - [Commits](https://github.com/github/super-linter/compare/v5...v6)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: github/super-linter
+      dependency-type: direct:production
+      update-type: version-update:semver-major
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+[33mcommit 3dc6b4c9bd9624ed259e676f8e9761dbf660c1bb[m
+Author: Philippe Leduc <philippe.leduc@wandercraft.eu>
+Date:   Wed Apr 24 17:01:11 2024 +0200
+
+    Add basic support for locales in order to C++ streams to build and work for simple cases (POSIX / C locale).
+    Fix build with C++ GCC toolchain
+
+[33mcommit 88fa598ea2fb965b35168bff409cce78b950ad69[m
+Author: Pressl, Štěpán <pressste@fel.cvut.cz>
+Date:   Mon Apr 22 23:13:10 2024 +0200
+
+    arch/arm/src/samv7/sam_pwm.c: option to enable only the L PWM outputs
+    
+    PWMx_CHy_LONLY options have been added to Kconfig, too.
+    If LONLY is selected, it's not possible to use complementary outputs.
+    If LONLY is not selected, it's possible to use H or complementary
+    output. If configured correctly with cpol and dcpol attributes,
+    a H-like behaviour can be achieved. May be useful when you run out
+    of free MCU pins.
+    
+    Signed-off-by: Stepan Pressl <pressste@fel.cvut.cz>
+
+[33mcommit 2c0dac86911e9561d5b1bbeb7e3d874ba8a63827[m
+Author: Rodrigo Sim <rcsim10@gmail.com>
+Date:   Sun Apr 28 11:25:13 2024 -0300
+
+    board/stm32f401rc-rs485: Add support to RNDIS
+    
+    Signed-off-by: Rodrigo Sim <rcsim10@gmail.com>
+
+[33mcommit 4b3

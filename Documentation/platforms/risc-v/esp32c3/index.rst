@@ -73,7 +73,7 @@ You can edit your shell's rc files if you don't use bash.
 Second stage bootloader
 =======================
 
-Nuttx can boot the ESP32-C3 directly using the so-called "Simple Boot". 
+Nuttx can boot the ESP32-H2 directly using the so-called "Simple Boot". 
 An externally-built 2nd stage bootloader is not required in this case as all
 functions required to boot the device are built within Nuttx. Simple boot does not
 require any specific configuration (it is selectable by default if no other
@@ -142,9 +142,9 @@ Peripheral Support
 
 The following list indicates the state of peripherals' support in NuttX:
 
-=========== ======= ====================
+=========== ======= =====
 Peripheral  Support NOTES
-=========== ======= ====================
+=========== ======= =====
 ADC          No
 AES          No
 Bluetooth    No
@@ -165,8 +165,8 @@ Timers       Yes
 Touch        No
 UART         Yes
 Watchdog     Yes
-Wifi         Yes     WPA3-SAE supported
-=========== ======= ====================
+Wifi         No
+=========== ======= =====
 
 Secure Boot and Flash Encryption
 ================================

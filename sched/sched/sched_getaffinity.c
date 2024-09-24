@@ -69,15 +69,13 @@
 int nxsched_get_affinity(pid_t pid, size_t cpusetsize, FAR cpu_set_t *mask)
 {
   FAR struct tcb_s *tcb;
-  irqstate_t flags;
   int ret;
 
   DEBUGASSERT(cpusetsize == sizeof(cpu_set_t) && mask != NULL);
 
   /* Verify that the PID corresponds to a real task */
 
-  flags = enter_critical_section();
-
+  sched_lock();
   if (pid == 0)
     {
       tcb = this_task();
@@ -99,7 +97,7 @@ int nxsched_get_affinity(pid_t pid, size_t cpusetsize, FAR cpu_set_t *mask)
       ret = OK;
     }
 
-  leave_critical_section(flags);
+  sched_unlock();
   return ret;
 }
 

@@ -65,14 +65,6 @@
 #  include "esp_board_rmt.h"
 #endif
 
-#ifdef CONFIG_ESPRESSIF_WIFI_BT_COEXIST
-#  include "esp_coexist_internal.h"
-#endif
-
-#ifdef CONFIG_ESPRESSIF_WIFI
-#  include "esp_board_wlan.h"
-#endif
-
 #include "esp32c3-generic.h"
 
 /****************************************************************************
@@ -128,24 +120,8 @@ int esp_bringup(void)
     }
 #endif
 
-#ifdef CONFIG_ESPRESSIF_MWDT0
-  ret = esp_wdt_initialize("/dev/watchdog0", ESP_WDT_MWDT0);
-  if (ret < 0)
-    {
-      _err("Failed to initialize WDT: %d\n", ret);
-    }
-#endif
-
-#ifdef CONFIG_ESPRESSIF_MWDT1
-  ret = esp_wdt_initialize("/dev/watchdog1", ESP_WDT_MWDT1);
-  if (ret < 0)
-    {
-      _err("Failed to initialize WDT: %d\n", ret);
-    }
-#endif
-
-#ifdef CONFIG_ESPRESSIF_RWDT
-  ret = esp_wdt_initialize("/dev/watchdog2", ESP_WDT_RWDT);
+#ifdef CONFIG_WATCHDOG
+  ret = esp_wdt_initialize();
   if (ret < 0)
     {
       _err("Failed to initialize WDT: %d\n", ret);
@@ -173,20 +149,6 @@ int esp_bringup(void)
   if (ret)
     {
       syslog(LOG_ERR, "ERROR: Failed to initialize SPI Flash\n");
-    }
-#endif
-
-#ifdef CONFIG_ESPRESSIF_WIFI_BT_COEXIST
-  esp_coex_adapter_register(&g_coex_adapter_funcs);
-  coex_pre_init();
-#endif
-
-#ifdef CONFIG_ESPRESSIF_WIFI
-  ret = board_wlan_init();
-  if (ret < 0)
-    {
-      syslog(LOG_ERR, "ERROR: Failed to initialize wireless subsystem=%d\n",
-             ret);
     }
 #endif
 

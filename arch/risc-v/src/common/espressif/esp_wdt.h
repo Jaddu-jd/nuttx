@@ -28,19 +28,6 @@
 #include <nuttx/config.h>
 
 /****************************************************************************
- * Public Types
- ****************************************************************************/
-
-/* Instances of Watchdog Timer  */
-
-enum esp_wdt_inst_e
-{
-  ESP_WDT_MWDT0 = 0,  /* Main System Watchdog Timer (MWDT) of Timer Group 0 */
-  ESP_WDT_MWDT1,      /* Main System Watchdog Timer (MWDT) of Timer Group 1 */
-  ESP_WDT_RWDT        /* RTC Watchdog Timer (RWDT) */
-};
-
-/****************************************************************************
  * Public Function Prototypes
  ****************************************************************************/
 
@@ -51,9 +38,7 @@ enum esp_wdt_inst_e
  *   Initialize the watchdog timer.
  *
  * Input Parameters:
- *   devpath - The full path to the watchdog.  This should
- *             be of the form /dev/watchdogX
- *   wdt_id  - A Watchdog Timer instance to be initialized.
+ *   None.
  *
  * Returned Values:
  *   Zero (OK) is returned on success; a negated errno value is returned on
@@ -61,6 +46,6 @@ enum esp_wdt_inst_e
  *
  ****************************************************************************/
 
-int esp_wdt_initialize(const char *devpath, enum esp_wdt_inst_e wdt_id);
+int esp_wdt_initialize(void);
 
 #endif /* __ARCH_RISCV_SRC_COMMON_ESPRESSIF_ESP_WDT_H */

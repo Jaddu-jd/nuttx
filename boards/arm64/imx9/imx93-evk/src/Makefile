@@ -38,8 +38,4 @@ ifeq ($(CONFIG_IMX9_LPSPI),y)
 CSRCS += imx9_spi.c
 endif
 
-ifeq ($(CONFIG_IMX9_USDHC),y)
-CSRCS += imx9_usdhc.c
-endif
-
 include $(TOPDIR)/boards/Board.mk

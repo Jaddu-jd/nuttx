@@ -423,7 +423,7 @@ config ARCH_BOARD_FRANZININHO_WIFI
 
 config ARCH_BOARD_ESP32S3_DEVKIT
 	bool "Espressif ESP32-S3 DevKit"
-	depends on ARCH_CHIP_ESP32S3WROOM1 || ARCH_CHIP_ESP32S3MINI1 || ARCH_CHIP_ESP32S3WROOM2 || ARCH_CHIP_ESP32S3WROOM2_32M
+	depends on ARCH_CHIP_ESP32S3WROOM1 || ARCH_CHIP_ESP32S3MINI1 || ARCH_CHIP_ESP32S3WROOM2
 	select ARCH_HAVE_LEDS
 	select ARCH_HAVE_BUTTONS
 	select ARCH_HAVE_IRQBUTTONS if ESP32S3_GPIO_IRQ
@@ -447,7 +447,7 @@ config ARCH_BOARD_ESP32S3_EYE
 
 config ARCH_BOARD_ESP32S3_LCD_EV
 	bool "Espressif ESP32-S3-LCD-EV Board"
-	depends on ARCH_CHIP_ESP32S3WROOM2 || ARCH_CHIP_ESP32S3WROOM2_32M
+	depends on ARCH_CHIP_ESP32S3WROOM2
 	select ARCH_HAVE_LEDS
 	select ARCH_HAVE_BUTTONS
 	select ARCH_HAVE_IRQBUTTONS if ESP32S3_GPIO_IRQ
@@ -465,7 +465,7 @@ config ARCH_BOARD_ESP32S3_LCD_EV
 
 config ARCH_BOARD_ESP32S3_BOX
 	bool "Espressif ESP32-S3-BOX"
-	depends on ARCH_CHIP_ESP32S3WROOM2 || ARCH_CHIP_ESP32S3WROOM2_32M
+	depends on ARCH_CHIP_ESP32S3WROOM2
 	select ARCH_HAVE_LEDS
 	select ARCH_HAVE_BUTTONS
 	select ARCH_HAVE_IRQBUTTONS if ESP32S3_GPIO_IRQ
@@ -1716,15 +1716,6 @@ config ARCH_BOARD_NUCLEO_G071RB
 		This is a minimal configuration that supports low-level test of the
 		Nucleo G071RB in the NuttX source tree.
 
-config ARCH_BOARD_WEACT_STM32H743
-	bool "WeAct Studio STM32H743"
-	depends on ARCH_CHIP_STM32H743VI
-	select ARCH_HAVE_LEDS
-	select ARCH_HAVE_BUTTONS
-	select ARCH_HAVE_IRQBUTTONS
-	---help---
-		This is WeAct MiniSTM32H7xx (STM32H743VIT6) board.
-
 config ARCH_BOARD_NUCLEO_H743ZI
 	bool "STM32H743 Nucleo H743ZI"
 	depends on ARCH_CHIP_STM32H743ZI
@@ -2544,6 +2535,18 @@ config ARCH_BOARD_STM32F411E_DISCO
 		This is a minimal configuration that supports low-level test of the
 		STMicro STM32F411E-Discovery Board.
 
+config ARCH_BOARD_STM32F427A_MINIMAL
+	bool "STM32F427A Minimal board"
+	depends on ARCH_CHIP_STM32F427A
+	---help---
+		Minimal board setup based on STMicro STM32F427AIT6 MCU.
+
+config ARCH_BOARD_STM32F427V
+	bool "STM32F427V Minimal board"
+	depends on ARCH_CHIP_STM32F427V
+	---help---
+		Minimal board setup based on STMicro STM32F427VIT6 MCU.
+
 config ARCH_BOARD_STM32F429I_DISCO
 	bool "STMicro STM32F429I-Discovery board"
 	depends on ARCH_CHIP_STM32F429Z
@@ -3296,7 +3299,6 @@ config ARCH_BOARD
 	default "stm32g071b-disco"          if ARCH_BOARD_STM32G071B_DISCO
 	default "nucleo-g070rb"             if ARCH_BOARD_NUCLEO_G070RB
 	default "nucleo-g071rb"             if ARCH_BOARD_NUCLEO_G071RB
-	default "weact-stm32h743"           if ARCH_BOARD_WEACT_STM32H743
 	default "nucleo-h743zi"             if ARCH_BOARD_NUCLEO_H743ZI
 	default "nucleo-h743zi2"            if ARCH_BOARD_NUCLEO_H743ZI2
 	default "nucleo-h745zi"             if ARCH_BOARD_NUCLEO_H745ZI
@@ -3414,6 +3416,8 @@ config ARCH_BOARD
 	default "stm32f334-disco"           if ARCH_BOARD_STM32F334_DISCO
 	default "stm32f4discovery"          if ARCH_BOARD_STM32F4_DISCOVERY
 	default "stm32f411e-disco"          if ARCH_BOARD_STM32F411E_DISCO
+	default "stm32f427a-minimal"		if ARCH_BOARD_STM32F427A_MINIMAL
+	default "stm32f427v"				if ARCH_BOARD_STM32F427V
 	default "stm32f429i-disco"          if ARCH_BOARD_STM32F429I_DISCO
 	default "stm32f746g-disco"          if ARCH_BOARD_STM32F746G_DISCO
 	default "stm32f769i-disco"          if ARCH_BOARD_STM32F769I_DISCO
@@ -3931,9 +3935,6 @@ endif
 if ARCH_BOARD_STM32H747I_DISCO
 source "boards/arm/stm32h7/stm32h747i-disco/Kconfig"
 endif
-if ARCH_BOARD_WEACT_STM32H743
-source "boards/arm/stm32h7/weact-stm32h743/Kconfig"
-endif
 if ARCH_BOARD_NUCLEO_H743ZI
 source "boards/arm/stm32h7/nucleo-h743zi/Kconfig"
 endif
@@ -4128,6 +4129,12 @@ source "boards/arm/stm32/stm32f3discovery/Kconfig"
 endif
 if ARCH_BOARD_STM32F411E_DISCO
 source "boards/arm/stm32/stm32f411e-disco/Kconfig"
+endif
+if ARCH_BOARD_STM32F427A_MINIMAL
+source "boards/arm/stm32/stm32f427a-minimal/Kconfig"
+endif
+if ARCH_BOARD_STM32F427V
+source "boards/arm/stm32/stm32f427v/Kconfig"
 endif
 if ARCH_BOARD_STM32F429I_DISCO
 source "boards/arm/stm32/stm32f429i-disco/Kconfig"

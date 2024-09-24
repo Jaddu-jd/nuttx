@@ -452,35 +452,6 @@ static const char *g_white_content_list[] =
   "XUnmapWindow",
 
   /* Ref:
-   * nuttx/arch/sim/src/sim_hostdecoder.*
-   */
-
-  "ISVCDecoder",
-  "SBufferInfo",
-  "SDecodingParam",
-  "eEcActiveIdc",
-  "sVideoProperty",
-  "eVideoBsType",
-  "cmResultSuccess",
-  "uiInBsTimeStamp",
-  "dsErrorFree",
-  "iBufferStatus",
-  "UsrData",
-  "sSystemBuffer",
-  "iWidth",
-  "iHeight",
-  "iStride",
-  "uiOutYuvTimeStamp",
-  "WelsCreateDecoder",
-  "WelsDestroyDecoder",
-  "Initialize",
-  "Uninitialize",
-  "DecodeFrame2",
-  "FlushFrame",
-  "SetOption",
-  "GetOption",
-
-  /* Ref:
    * sim/posix/sim_deviceimage.c
    */
 
@@ -3122,16 +3093,7 @@ int main(int argc, char **argv, char **envp)
 
           if (m > g_maxline && !rhcomment)
             {
-              /* Ignore the line 2 (file path) */
-
-              if (lineno == 2)
-                {
-                  INFO("Skipping checking line 2: path file\n", 2, m);
-                }
-              else
-                {
-                  ERROR("Long line found", lineno, m);
-                }
+              ERROR("Long line found", lineno, m);
             }
         }
 

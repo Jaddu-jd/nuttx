@@ -149,6 +149,8 @@
 
 #define STM32_LCD_CD      (GPIO_OUTPUT|GPIO_CNF_OUTPP|GPIO_MODE_50MHz|\
                            GPIO_OUTPUT_SET|GPIO_PORTA|GPIO_PIN2)
+#define GPIO_CS_MAG      (GPIO_OUTPUT|GPIO_CNF_OUTPP|GPIO_MODE_50MHz|\
+                           GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN12)
 
 /* PWM Configuration */
 
