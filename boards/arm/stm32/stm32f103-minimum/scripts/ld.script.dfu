@@ -28,6 +28,7 @@ MEMORY
 {
     flash (rx) : ORIGIN = 0x08002000, LENGTH = 120K
     sram (rwx) : ORIGIN = 0x20000000, LENGTH = 20K
+    external_sram (rwx) : ORIGIN = 0x20000000, LENGTH = 20K
 }
 
 OUTPUT_ARCH(arm)
@@ -100,6 +101,21 @@ SECTIONS
                 _ebss = ABSOLUTE(.);
         } > sram
 
+ .data : ALIGN(4) {
+                _sdata = ABSOLUTE(.);
+                *(.data .data.*)
+                *(.gnu.linkonce.d.*)
+                CONSTRUCTORS
+                _edata = ABSOLUTE(.);
+        } > external_sram AT > flash
+
+        .bss : ALIGN(4) {
+                _sbss = ABSOLUTE(.);
+                *(.bss .bss.*)
+                *(.gnu.linkonce.b.*)
+                *(COMMON)
+                _ebss = ABSOLUTE(.);
+        } > external_sram
         /* Stabs debugging sections. */
         .stab 0 : { *(.stab) }
         .stabstr 0 : { *(.stabstr) }

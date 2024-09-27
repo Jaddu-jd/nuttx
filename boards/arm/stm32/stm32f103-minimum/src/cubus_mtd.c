@@ -5,9 +5,9 @@
 #include <sys/mount.h>
 #include <nuttx/spi/spi.h>
 
-#include <stdio.h>
+// #include <stdio.h>
 #include<debug.h>
-#include <syslog.h>
+// #include <syslog.h>
 
 #include <inttypes.h>
 #include <errno.h>
@@ -19,6 +19,7 @@ extern struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
 static int num_instances = 0;
 static int total_blocks = 0;
 static mtd_instance_s *instances[MAX_MTD_INSTANCES]={};
+
 
 
 static const cubus_mft_device_t spi2_dev = {             // MT25QL on FMUM 1Gb 2048 X 64K
@@ -39,7 +40,7 @@ static const cubus_mtd_entry_t cubus_sfm = {
 		{					
 			.type = MTD_MISSION,			// storage space for missions
 			.path = "/fs/sfm/mtd_mission",	
-			.nblocks = 262144				// 64 MB in no of pages
+			.nblocks = 262144			// 64 MB in no of pages
 		}
 	},
 };

@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <debug.h>
-#include <syslog.h>
+// #include <syslog.h>
 
 #include <nuttx/kmalloc.h>
 #include <nuttx/signal.h>
@@ -454,7 +454,6 @@ static void mt25ql_writeenable(struct mt25ql_dev_s *priv)
 	SPI_SELECT(priv->dev, SPIDEV_FLASH(0), false);
 	nxsig_usleep(1000);
 	finfo("Enabled\n");
-	syslog(LOG_DEBUG,"write enabled\n");
 }
 
 /****************************************************************************
@@ -1084,7 +1083,7 @@ static ssize_t mt25ql_read(FAR struct mtd_dev_s *dev,
 	mt25ql_unlock(priv->dev);
 
 	finfo("return nbytes: %d\n", (int)nbytes);
-	syslog(LOG_DEBUG,"return nbytes: %d\n", (int)nbytes);
+	// syslog(LOG_DEBUG,"return nbytes: %d\n", (int)nbytes);
 	return nbytes;
 }
 

@@ -30,8 +30,9 @@
 #include <errno.h>
 #include <assert.h>
 #include <debug.h>
-// #include <syslog.h>
+#include <syslog.h>
 #include <nuttx/fs/fs.h>
+#include <stdio.h>
 
 #include "inode/inode.h"
 #include "driver/driver.h"
@@ -513,6 +514,7 @@ errout:
 
 #else
   ferr("ERROR: No filesystems enabled\n");
+  printf("ERROR:no filesystems enabled\n");
   return -ENOSYS;
 #endif /* BDFS_SUPPORT || MDFS_SUPPORT || NODFS_SUPPORT */
 }

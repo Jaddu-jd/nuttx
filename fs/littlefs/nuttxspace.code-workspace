@@ -1,0 +1,48 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../nuttxspace"
+		},
+		{
+			"path": "../../../../../Antarikchya_cubeos/CubeOS"
+		},
+		{
+			"path": "../../../.."
+		}
+	],
+	"settings": {
+		"C_Cpp.enhancedColorization": "enabled",
+		"ctags.languages": [
+			"Kconfig",
+			"Make"
+		],
+		"nuttx.checkPatch": true,
+		"nuttx.checkPatchPath": "${workspaceFolder}/nuttx/tools/checkpatch.sh",
+		"nuttx.configureScriptPath": "${workspaceFolder}/nuttx/tools/configure.sh",
+		"files.associations": {
+			"cubus_mtd.h": "c",
+			"mtd.h": "c",
+			"uorb.h": "c",
+			"sensor.h": "c",
+			"mag.h": "c",
+			"lis3mdl.h": "c",
+			"configdata.h": "c",
+			"stm32f103_minimum.h": "c",
+			"stm32f427a.h": "c",
+			"stm32f427b.h": "c",
+			"stm32f20xxx_gpio.h": "c",
+			"chip.h": "c",
+			"stm32_gpio.h": "c",
+			"config.h": "c",
+			"mikroe-stm32f4.h": "c",
+			"condition_variable": "c",
+			"ioctl.h": "c",
+			"arm_internal.h": "c",
+			"lfs_util.h": "c",
+			"file_operations.h": "c",
+			"mount.h": "c",
+			"spi.h": "c",
+			"lfs_vfs.h": "c"
+		}
+	}
+}

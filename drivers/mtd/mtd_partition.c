@@ -33,8 +33,10 @@
 #include <debug.h>
 #include <string.h>
 #include <fcntl.h>
-#include <stdio.h>
+// #include <stdio.h>
 #include <sys/stat.h>
+
+// #include <syslog.h>
 
 #include <nuttx/mtd/mtd.h>
 #include <nuttx/kmalloc.h>
@@ -847,6 +849,8 @@ FAR struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
          kmm_zalloc(sizeof(struct mtd_partition_s));
   if (!part)
     {
+      syslog(LOG_DEBUG,"ERROR: Failed to allocate memory for the partition device\n");
+
       ferr("ERROR: Failed to allocate memory for the partition device\n");
       return NULL;
     }
@@ -857,6 +861,7 @@ FAR struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
                    (unsigned long)((uintptr_t)&part->geo));
   if (ret < 0)
     {
+      syslog(LOG_DEBUG, "ERROR: mtd->ioctl failed: %d\n", ret);
       ferr("ERROR: mtd->ioctl failed: %d\n", ret);
       kmm_free(part);
       return NULL;
@@ -878,7 +883,7 @@ FAR struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
 
   erasestart = (firstblock + part->blkpererase - 1) / part->blkpererase;
   eraseend   = (firstblock + nblocks) / part->blkpererase;
-
+  syslog(LOG_SYSLOG, "Erase start : %d, eraseend: %d\n", erasestart, eraseend);
   if (erasestart >= eraseend)
     {
       ferr("ERROR: sub-region too small\n");
