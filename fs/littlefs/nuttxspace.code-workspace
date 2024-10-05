@@ -42,7 +42,8 @@
 			"file_operations.h": "c",
 			"mount.h": "c",
 			"spi.h": "c",
-			"lfs_vfs.h": "c"
+			"lfs_vfs.h": "c",
+			"common_functions_edited.h": "c"
 		}
 	}
 }
