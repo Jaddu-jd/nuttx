@@ -43,7 +43,8 @@
 			"mount.h": "c",
 			"spi.h": "c",
 			"lfs_vfs.h": "c",
-			"common_functions_edited.h": "c"
+			"common_functions_edited.h": "c",
+			"gpio_definitions.h": "c"
 		}
 	}
 }
