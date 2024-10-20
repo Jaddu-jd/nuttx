@@ -44,7 +44,13 @@
 			"spi.h": "c",
 			"lfs_vfs.h": "c",
 			"common_functions_edited.h": "c",
-			"gpio_definitions.h": "c"
+			"gpio_definitions.h": "c",
+			"cubus_app_main.h": "c",
+			"adc_main.h": "c",
+			"common_functions.h": "c",
+			"mag_main.h": "c",
+			"stdio.h": "c",
+			"wdog.h": "c"
 		}
 	}
 }
