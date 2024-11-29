@@ -927,6 +927,7 @@ static int mpu_close(FAR struct file *filep)
 
 static ssize_t mpu_read(FAR struct file *filep, FAR char *buf, size_t len)
 {
+  syslog(LOG_DEBUG, "---------------------------------------------------------MPU read called");
   FAR struct inode *inode = filep->f_inode;
   FAR struct mpu_dev_s *dev = inode->i_private;
   size_t send_len = 0;

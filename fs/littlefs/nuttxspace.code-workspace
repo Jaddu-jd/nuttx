@@ -50,7 +50,12 @@
 			"common_functions.h": "c",
 			"mag_main.h": "c",
 			"stdio.h": "c",
-			"wdog.h": "c"
+			"wdog.h": "c",
+			"watchdog.h": "c",
+			"limits.h": "c",
+			"stdbool.h": "c",
+			"time.h": "c",
+			"assert.h": "c"
 		}
 	}
 }
