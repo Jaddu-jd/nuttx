@@ -55,7 +55,9 @@
 			"limits.h": "c",
 			"stdbool.h": "c",
 			"time.h": "c",
-			"assert.h": "c"
+			"assert.h": "c",
+			"fcntl.h": "c",
+			"rgb.h": "c"
 		}
 	}
 }
