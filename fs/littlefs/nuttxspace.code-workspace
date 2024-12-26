@@ -57,7 +57,15 @@
 			"time.h": "c",
 			"assert.h": "c",
 			"fcntl.h": "c",
-			"rgb.h": "c"
+			"rgb.h": "c",
+			"*.tcc": "c",
+			"bitset": "c",
+			"chrono": "c",
+			"array": "c",
+			"string": "c",
+			"string_view": "c",
+			"ranges": "c",
+			"variant": "c"
 		}
 	}
 }
