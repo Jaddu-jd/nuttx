@@ -713,7 +713,11 @@ static void stm32_stdclockconfig(void)
 
   for (timeout = HSIRDY_TIMEOUT; timeout > 0; timeout--)
     {
+<<<<<<< HEAD
       /* Check if the HSIRDY flazg is the set in the CR */
+=======
+      /* Check if the HSIRDY flag is the set in the CR */
+>>>>>>> 989c2c12530523744cffc565ad456af186c044dd
 
       if ((getreg32(STM32_RCC_CR) & RCC_CR_HSIRDY) != 0)
         {

@@ -31,6 +31,7 @@
 
 #include <arch/board/board.h>
 #include <nuttx/spi/spi.h>
+#include <stm32wl5_spi.h>
 
 #include "arm_internal.h"
 #include "chip.h"

@@ -279,9 +279,15 @@ static void lis3mdl_read_measurement_data(FAR struct lis3mdl_dev_s *dev,
 
   lis3mdl_read_temperature(dev, &temperature);
 
+<<<<<<< HEAD
   data->x = (uint16_t) (x_mag);
   data->y = (uint16_t) (y_mag);
   data->z = (uint16_t) (z_mag);
+=======
+  data->x = (float) (x_mag);
+  data->y = (float) (y_mag);
+  data->z = (float) (z_mag);
+>>>>>>> 989c2c12530523744cffc565ad456af186c044dd
   data->temperature = (float) temperature;
   data->timestamp = sensor_get_timestamp();
 }

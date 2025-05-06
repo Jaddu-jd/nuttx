@@ -35,7 +35,10 @@
 #include <unistd.h>
 #include <errno.h>
 #include <debug.h>
+<<<<<<< HEAD
 // #include <syslog.h>
+=======
+>>>>>>> 989c2c12530523744cffc565ad456af186c044dd
 
 #include <nuttx/kmalloc.h>
 #include <nuttx/signal.h>
@@ -1083,7 +1086,10 @@ static ssize_t mt25ql_read(FAR struct mtd_dev_s *dev,
 	mt25ql_unlock(priv->dev);
 
 	finfo("return nbytes: %d\n", (int)nbytes);
+<<<<<<< HEAD
 	// syslog(LOG_DEBUG,"return nbytes: %d\n", (int)nbytes);
+=======
+>>>>>>> 989c2c12530523744cffc565ad456af186c044dd
 	return nbytes;
 }
 
@@ -1312,12 +1318,19 @@ FAR struct mtd_dev_s *mt25ql_initialize(FAR struct spi_dev_s *dev)
           /* Unrecognized!
            * Discard all of that work we just did and return NULL
            */
+<<<<<<< HEAD
 		//   syslog(LOG_DEBUG, "Uncrecognized read id\n");
+=======
+
+>>>>>>> 989c2c12530523744cffc565ad456af186c044dd
           ferr("ERROR: Unrecognized\n");
           kmm_free(priv);
           return NULL;
         }
+<<<<<<< HEAD
 		// syslog(LOG_DEBUG, "----------Recognized id- --------- \n");
+=======
+>>>>>>> 989c2c12530523744cffc565ad456af186c044dd
     }
 
   /* Return the implementation-specific state structure as the MTD device */

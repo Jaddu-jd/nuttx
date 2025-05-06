@@ -25,17 +25,21 @@
 #include <nuttx/config.h>
 
 #include <debug.h>
+#include <stdio.h>
+#include <syslog.h>
 
 #include <nuttx/arch.h>
 #include <nuttx/board.h>
 #include <nuttx/spi/spi.h>
+#include <stdbool.h>
 
 #include <arch/board/board.h>
+#include <string.h>
 
 #ifdef CONFIG_VIDEO_FB
 #include <nuttx/video/fb.h>
 #endif
-
+#include <fcntl.h>
 #include "arm_internal.h"
 #include "nucleo-wl55jc.h"
 
@@ -50,6 +54,25 @@
 /****************************************************************************
  * Public Functions
  ****************************************************************************/
+
+
+ /************************************************************************************
+ * Name: board_peripheral_reset
+ *
+ * Description:
+ *
+ ************************************************************************************/
+ void board_peripheral_reset(int ms)
+{
+	// Setting the kill switch control gpio
+
+
+	usleep(ms * 1000);
+	syslog(LOG_DEBUG, "reset done, %d ms\n", ms);
+	stm32wl5_gpiowrite(GPIO_MAG_CS, true);
+
+}
+
 
 /****************************************************************************
  * Name: stm32wl5_board_initialize
@@ -66,7 +89,20 @@ void stm32wl5_board_initialize(void)
 {
   /* Configure on-board LEDs, which are always enabled */
 
-  board_leds_initialize();
+  // board_leds_initialize();
+  // sleep(10);
+  // stm32_bringup();
+  
+  stm32wl5_configgpio(GPIO_MAG_CS);
+  // int i=0;
+  // while(i<5){
+    syslog(LOG_DEBUG, "INIT board ms\n");
+    
+  //   usleep(10000);
+  //   i++;
+  // }
+  stm32_bringup();
+
 }
 
 /****************************************************************************
@@ -113,5 +149,45 @@ void board_late_initialize(void)
 #if defined(CONFIG_NSH_LIBRARY) && !defined(CONFIG_NSH_ARCHINIT)
   board_app_initialize(0);
 #endif
+
+stm32_bringup();
 }
 #endif
+
+
+static struct spi_dev_s *spi1;
+
+int board_app_initialize(uintptr_t arg)
+{
+  stm32wl5_configgpio(GPIO_MAG_CS);
+//   stm32wl5_wdg_setup();
+  printf("Initializing board applications.\n");
+  stm32wl5_configgpio(GPIO_MAG_CS);
+
+  board_peripheral_reset(10);
+  
+
+#if defined(CONFIG_STM32WL5_SPI1) || defined(CONFIG_STM32WL5_SPI1)
+
+  /* Configure SPI chip selects if 1) SPI is not disabled, and 2) the weak
+   * function stm32_spidev_initialize() has been brought into the link.
+   */
+
+  // if (stm32wl5_spidev_initialize())
+    {
+      stm32wl5_spidev_initialize(); 
+    }
+#endif
+
+#ifdef CONFIG_BOARD_LATE_INITIALIZE
+  /* Board initialization already performed by board_late_initialize() */
+
+  return OK;
+#else
+  /* Perform board-specific initialization */
+  
+  return stm32_bringup();
+  
+#endif
+}
+
